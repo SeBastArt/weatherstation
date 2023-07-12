@@ -1,0 +1,7 @@
+EPaperClient/Debug/
+InputApi/obj/
+InputApi/bin/
+.vs/
+.idea/
+*.filters
+EPaperClient/__vm/
