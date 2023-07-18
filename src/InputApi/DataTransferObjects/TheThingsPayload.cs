@@ -53,7 +53,7 @@ public class DecodedPayloadDecentlab
 
     [JsonProperty("temperature")]
     [JsonPropertyName("temperature")]
-    public Temperature Temperature { get; set; }
+    public Temperature? Temperature { get; set; }
 }
 
 public class DecodedPayloadDragino

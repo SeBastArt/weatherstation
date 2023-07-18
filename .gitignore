@@ -5,3 +5,7 @@ InputApi/bin/
 .idea/
 *.filters
 EPaperClient/__vm/
+src/EPaperClient/Debug/
+src/InputApi/bin/
+src/InputApi/obj/
+src/EPaperClient/__vm/
