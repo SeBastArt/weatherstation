@@ -46,7 +46,7 @@ jobs:
       -
         name: Build docker image
         if: success()
-        working-directory: InputApi
+        working-directory: src
         run: |
           docker buildx build . \
             --platform ${{ steps.prepare.outputs.docker_platform }} \
