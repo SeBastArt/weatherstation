@@ -20,6 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3826
 		.github\workflows\deploy_frontend.yaml = .github\workflows\deploy_frontend.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{063346F0-563C-4A53-B9A2-56403C11A31C}"
+	ProjectSection(SolutionItems) = preProject
+		src\deployment\InputApi.Dockerfile = src\deployment\InputApi.Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +54,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9B602292-6E85-4BBC-A849-BEB785B20E06} = {2D7D99E2-F3FD-4DE1-A369-42A6F77D8435}
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88} = {2D7D99E2-F3FD-4DE1-A369-42A6F77D8435}
+		{063346F0-563C-4A53-B9A2-56403C11A31C} = {2D7D99E2-F3FD-4DE1-A369-42A6F77D8435}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6FFAEA35-CD97-4010-9783-F4D65E7FAEF9}

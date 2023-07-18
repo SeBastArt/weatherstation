@@ -50,7 +50,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform ${{ steps.prepare.outputs.docker_platform }} \
-            --file Dockerfile \
+            --file ./deployment/InputApi.Dockerfile \
             --tag ${{ steps.prepare.outputs.docker_image }}:${{ github.sha }} \
             --tag ${{ steps.prepare.outputs.docker_image }}:latest \
             --output type=image,push=true
