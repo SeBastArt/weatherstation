@@ -21,5 +21,8 @@ spec:
           image: sebastart/weatherstation:latest
           ports:
             - containerPort: 80
+      envFrom:
+        - secretRef:
+          name: influxdb-secrets
       imagePullSecrets:
         - name: docker-container-registry

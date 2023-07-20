@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-data
+  namespace: weatherstation
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-data-db
+  namespace: weatherstation
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-deployment
+  namespace: weatherstation
+spec:
+  selector:
+    matchLabels:
+      app: influxdb
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+        - image: influxdb:latest
+          name: influxdb
+          ports:
+            - containerPort: 8086
+          volumeMounts:
+            - mountPath: /etc/influxdb2
+              name: influxdb-data
+            - mountPath: /var/lib/influxdb2
+              name: influxdb-data-db
+          envFrom:
+            - secretRef:
+                name: influxdb-secrets
+      volumes:
+        - name: influxdb-data
+          persistentVolumeClaim:
+            claimName: influxdb-data
+        - name: influxdb-data-db
+          persistentVolumeClaim:
+            claimName: influxdb-data-db
+        - name: influxdb-config
+          configMap:
+            name: influxdb-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb-service
+  namespace: weatherstation
+spec:
+  selector:
+    app: influxdb
+  ports:
+    - protocol: TCP
+      port: 8086
+      targetPort: 8086

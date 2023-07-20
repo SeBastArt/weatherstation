@@ -75,6 +75,7 @@ jobs:
         with:
           namespace: weatherstation
           manifests: |
+            Deployment/influxdb.yaml
             Deployment/deployment.yaml
             Deployment/service.yaml
           images: |

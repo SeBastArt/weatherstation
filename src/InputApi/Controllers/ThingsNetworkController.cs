@@ -19,13 +19,14 @@ public class ThingsNetworkController : ControllerBase
     public ThingsNetworkController(InfluxDbService service, IConfiguration configuration)
     {
         _service = service;
-        _bucket = configuration.GetValue<string>("InfluxDB:Bucket");
-        _organisation = configuration.GetValue<string>("InfluxDB:Organisation");
+        _bucket = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_BUCKET");
+        _organisation = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_ORG");
     }
 
     [HttpGet("GetHumidity", Name = "GetHumidity")]
     public async Task<ActionResult<double>> GetHumidity([FromQuery] string eui)
     {
+
         if (string.IsNullOrEmpty(eui)) return NoContent();
         return Ok(await _service.QueryAsync(async query =>
         {

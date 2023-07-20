@@ -9,7 +9,7 @@ public class InfluxDbService
 
     public InfluxDbService(IConfiguration configuration)
     {
-        _token = configuration.GetValue<string>("InfluxDB:Token");
+        _token = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_ADMIN_TOKEN");
         _host = configuration.GetValue<string>("InfluxDB:Host");
     }
 
