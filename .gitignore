@@ -10,3 +10,5 @@ src/InputApi/bin/
 src/InputApi/obj/
 src/EPaperClient/__vm/
 src/EPaperClient/obj/
+bin/
+obj/

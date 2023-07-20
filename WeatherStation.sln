@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 		Deployment\service.yaml = Deployment\service.yaml
 	EndProjectSection
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F26178C9-911A-4BBA-99B8-04C66F550736}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,26 @@ Global
 		{AE512821-54CD-4882-AA13-4ECC2F0608B7}.Release|x86.ActiveCfg = Release|x86
 		{AE512821-54CD-4882-AA13-4ECC2F0608B7}.Release|x86.Build.0 = Release|x86
 		{AE512821-54CD-4882-AA13-4ECC2F0608B7}.Release|x86.Deploy.0 = Release|x86
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|ARM.Build.0 = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|x64.Build.0 = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Debug|x86.Build.0 = Debug|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|ARM.ActiveCfg = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|ARM.Build.0 = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|ARM64.Build.0 = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|x64.ActiveCfg = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|x64.Build.0 = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|x86.ActiveCfg = Release|Any CPU
+		{F26178C9-911A-4BBA-99B8-04C66F550736}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

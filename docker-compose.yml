@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  inputapi:
+    image: ${DOCKER_REGISTRY-}inputapi
+    networks:
+      - default
+    build:
+      context: .
+      dockerfile: src/InputApi/Dockerfile
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    networks:
+      - default
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - c:/temp/docker/influxdb2:/etc/influxdb2
+      - c:/temp/docker/influxdb2/db:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin
+      - DOCKER_INFLUXDB_INIT_ORG=organization
+      - DOCKER_INFLUXDB_INIT_BUCKET=bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-secret-dev-token
