@@ -50,7 +50,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform ${{ steps.prepare.outputs.docker_platform }} \
-            --file ./deployment/InputApi.Dockerfile \
+            --file ./InputApi/Dockerfile \
             --tag ${{ steps.prepare.outputs.docker_image }}:${{ github.sha }} \
             --tag ${{ steps.prepare.outputs.docker_image }}:latest \
             --output type=image,push=true
@@ -75,7 +75,7 @@ jobs:
         with:
           namespace: weatherstation
           manifests: |
-            kubernetes/deployment.yaml
-            kubernetes/service.yaml
+            Deployment/deployment.yaml
+            Deployment/service.yaml
           images: |
             sebastart/weatherstation:${{ github.sha }}  
