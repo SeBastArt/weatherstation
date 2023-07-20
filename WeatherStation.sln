@@ -12,8 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{1305C9CA-6C1E-48DF-AAB0-25C238E4526B}"
 	ProjectSection(SolutionItems) = preProject
 		Deployment\deployment.yaml = Deployment\deployment.yaml
-		influxdb.yaml = influxdb.yaml
-		influxSecretExample.yaml = influxSecretExample.yaml
+		Deployment\influxdb.yaml = Deployment\influxdb.yaml
+		Deployment\influxSecretExample.yaml = Deployment\influxSecretExample.yaml
 		Deployment\service.yaml = Deployment\service.yaml
 	EndProjectSection
 EndProject
