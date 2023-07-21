@@ -5,7 +5,7 @@ metadata:
   namespace: weatherstation
 spec:
   capacity:
-    storage: 2Gi
+    storage: 5Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
@@ -16,39 +16,9 @@ spec:
     type: DirectoryOrCreate
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: influxdb-data-db
-  namespace: weatherstation
-spec:
-  capacity:
-    storage: 5Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
-  hostPath:
-    path: "/mnt/influx-data-db"
-    type: DirectoryOrCreate
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: influxdb-data
-  namespace: weatherstation
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: local-storage
-  resources:
-    requests:
-      storage: 2Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: influxdb-data-db
   namespace: weatherstation
 spec:
   accessModes:
@@ -65,15 +35,18 @@ metadata:
   namespace: weatherstation
   labels:
     app: influxdb
+    version: v1
 spec:
   selector:
     matchLabels:
       app: influxdb
+      version: v1
   minReadySeconds: 5
   template:
     metadata:
       labels:
         app: influxdb
+        version: v1
     spec:
       containers:
         - image: influxdb:2.7.1
@@ -84,7 +57,7 @@ spec:
             - mountPath: /etc/influxdb2
               name: influxdb-data
             - mountPath: /var/lib/influxdb2
-              name: influxdb-data-db
+              name: influxdb-data
           envFrom:
             - secretRef:
                 name: influxdb-secrets
@@ -92,14 +65,11 @@ spec:
         - name: influxdb-data
           persistentVolumeClaim:
             claimName: influxdb-data
-        - name: influxdb-data-db
-          persistentVolumeClaim:
-            claimName: influxdb-data-db
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: influxdb-service
+  name: influxdb
   namespace: weatherstation
   labels:
     app: influxdb
@@ -112,16 +82,3 @@ spec:
       protocol: TCP
       port: 8086
       targetPort: 8086
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: influxdb
-spec:
-  hosts:
-  - influxdb
-  http:
-  - route:
-    - destination:
-        host: influxdb
----	
