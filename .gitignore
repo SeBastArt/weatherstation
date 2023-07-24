@@ -12,3 +12,4 @@ src/EPaperClient/__vm/
 src/EPaperClient/obj/
 bin/
 obj/
+*.htm
