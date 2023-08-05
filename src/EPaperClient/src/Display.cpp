@@ -13,19 +13,14 @@ using namespace e_ink_display_project; // Namespace verwenden
 
 auto display::update_date_time() -> void
 {
-    Serial.println("Jo");
     configTime(gmt_offset_sec_, daylight_offset_sec_, ntp_server_);
     if (!getLocalTime(&time_info)) {
         Serial.println("Failed to obtain time -2 ");
-    }
-    else {
-        Serial.printf("got it 2");
     }
 }
 
 uint8_t* display::create_full_image() const
 {
-    Serial.println("create_full_image");
     //Create a new image cache
     UBYTE* black_image;
     UWORD imagesize = EPD_7IN5_V2_WIDTH / 8 * EPD_7IN5_V2_HEIGHT;
@@ -36,7 +31,6 @@ uint8_t* display::create_full_image() const
 
     //Serial.println("Paint_NewImage\r\n");
     Paint_NewImage(black_image, EPD_7IN5_V2_WIDTH, EPD_7IN5_V2_HEIGHT, 0, WHITE);
-    Serial.println("create_full_image out");
     return black_image;
 }
 
@@ -53,6 +47,7 @@ display::display(): height_(EPD_7IN5_V2_HEIGHT), width_(EPD_7IN5_V2_WIDTH), time
 
 auto display::flush() const -> void
 {
+    Paint_SetRotate(180);
     EPD_7IN5_V2_Display(full_image_);
 }
 
@@ -150,6 +145,5 @@ auto display::clear_screen() -> void
 {
     EPD_7IN5_V2_Clear();
 }
-
 
 

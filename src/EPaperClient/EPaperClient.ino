@@ -94,9 +94,11 @@ void loop()
         display->write_room("Wohnzimmer", fetch_data_from_api("0004A30B001FDC0B"), 0, (EPD_7IN5_V2_HEIGHT / 3));
         display->write_room("Simon", fetch_data_from_api("A84041000181854C"), (EPD_7IN5_V2_WIDTH / 3), (EPD_7IN5_V2_HEIGHT / 3));
         display->write_room("Badezimmer", fetch_data_from_api("0004A30B002240C2"), 2 * (EPD_7IN5_V2_WIDTH / 3), (EPD_7IN5_V2_HEIGHT / 3));
-        display->write_room("Schlafzimmer", fetch_data_from_api("0004A30B001FB02B"), 0, 2 * (EPD_7IN5_V2_HEIGHT / 3));
-        display->write_room("Balkon", fetch_data_from_api("0025CA0A00000476"), (EPD_7IN5_V2_WIDTH / 3), 2 * (EPD_7IN5_V2_HEIGHT / 3));
+        display->write_room("Schlafzimmer", fetch_data_from_api("0025CA0A00000476"), 0, 2 * (EPD_7IN5_V2_HEIGHT / 3));
+        display->write_room("Balkon", fetch_data_from_api("0004A30B001FB02B"), (EPD_7IN5_V2_WIDTH / 3), 2 * (EPD_7IN5_V2_HEIGHT / 3));
+
         display->flush();
+        delete display;
     }
     ESP.deepSleep(60e6);
 }
