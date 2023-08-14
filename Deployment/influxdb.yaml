@@ -1,32 +1,15 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: influxdb-data
-  namespace: weatherstation
-spec:
-  capacity:
-    storage: 10Gi   # Gesamte Speicherkapazität für beide Verzeichnisse
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
-  hostPath:
-    path: "/mnt/influxdb-data"
-    type: DirectoryOrCreate
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: influxdb-data
+  name: influxdb-pvc
   namespace: weatherstation
 spec:
   accessModes:
-    - ReadWriteOnce
-  storageClassName: local-storage
+  - ReadWriteOnce
+  storageClassName: longhorn
   resources:
     requests:
-      storage: 10Gi   # Gesamte Speicheranforderung für beide Verzeichnisse
+      storage: 10Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -49,22 +32,22 @@ spec:
         version: v1
     spec:
       containers:
-        - image: influxdb:2.7.1
-          name: influxdb
-          ports:
-            - containerPort: 8086
-          volumeMounts:
-            - mountPath: /etc/influxdb2
-              name: influxdb-data
-            - mountPath: /var/lib/influxdb2
-              name: influxdb-data
-          envFrom:
-            - secretRef:
-                name: influxdb-secrets
+      - image: influxdb:2.7.1
+        name: influxdb
+        ports:
+        - containerPort: 8086
+        volumeMounts:
+        - mountPath: /etc/influxdb2
+          name: influxdb-storage
+        - mountPath: /var/lib/influxdb2
+          name: influxdb-storage
+        envFrom:
+        - secretRef:
+            name: influxdb-secrets
       volumes:
-        - name: influxdb-data
-          persistentVolumeClaim:
-            claimName: influxdb-data
+      - name: influxdb-storage
+        persistentVolumeClaim:
+          claimName: influxdb-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -78,7 +61,7 @@ spec:
   selector:
     app: influxdb
   ports:
-    - name: http
-      protocol: TCP
-      port: 8086
-      targetPort: 8086
+  - name: http
+    protocol: TCP
+    port: 8086
+    targetPort: 8086
