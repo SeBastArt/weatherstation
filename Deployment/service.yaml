@@ -25,7 +25,7 @@ spec:
       name: http-weatherstation
       protocol: HTTP
     hosts:
-    - "141.147.46.206.nip.io"
+    - "130.61.108.242.nip.io"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -34,7 +34,7 @@ metadata:
   namespace: weatherstation
 spec:
   hosts:
-  - "141.147.46.206.nip.io"
+  - "130.61.108.242.nip.io"
   gateways:
   - weatherstation-gateway
   http:
