@@ -75,9 +75,9 @@ jobs:
         with:
           namespace: weatherstation
           manifests: |
-            Deployment/Deployment.yaml
-            Deployment/Service.yaml
-            Deployment/VirtualService.yaml
-            Deployment/DestinationRule.yaml
+            Deployment/InputApi/Deployment.yaml
+            Deployment/InputApi/Service.yaml
+            Deployment/InputApi/VirtualService.yaml
+            Deployment/InputApi/DestinationRule.yaml
           images: |
             sebastart/weatherstation:${{ github.sha }}  
