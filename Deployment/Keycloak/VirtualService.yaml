@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: keycloak-vs
+  namespace: auth
+spec:
+  hosts:
+  - "keycloak.wondering-developer.de"
+  gateways:
+  - default/ingress-gateway
+  http:
+  - route:
+    - destination:
+        host: openidconnect
+        port:
+          number: 8080

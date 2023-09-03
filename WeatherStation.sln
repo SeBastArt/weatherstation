@@ -10,14 +10,39 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EPaperClient", "src\EPaperClient\EPaperClient.vcxproj", "{AE512821-54CD-4882-AA13-4ECC2F0608B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{1305C9CA-6C1E-48DF-AAB0-25C238E4526B}"
-	ProjectSection(SolutionItems) = preProject
-		Deployment\deployment.yaml = Deployment\deployment.yaml
-		Deployment\influxdb.yaml = Deployment\influxdb.yaml
-		Deployment\influxSecretExample.yaml = Deployment\influxSecretExample.yaml
-		Deployment\service.yaml = Deployment\service.yaml
-	EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F26178C9-911A-4BBA-99B8-04C66F550736}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InputApi", "InputApi", "{9BCC03F6-7681-4981-8BD2-06AE9785BDDF}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\InputApi\deployment.yaml = Deployment\InputApi\deployment.yaml
+		Deployment\InputApi\influxdb.yaml = Deployment\InputApi\influxdb.yaml
+		Deployment\InputApi\influxSecretExample.yaml = Deployment\InputApi\influxSecretExample.yaml
+		Deployment\InputApi\service.yaml = Deployment\InputApi\service.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{33D00CEC-A115-4F68-9B0A-DF4233851AA6}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Infrastructure\Gateway.yaml = Deployment\Infrastructure\Gateway.yaml
+		Deployment\Infrastructure\VirtualServices.yaml = Deployment\Infrastructure\VirtualServices.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keycloak", "Keycloak", "{1338792E-BA28-4970-93CF-E9482DD8FB36}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Keycloak\Deployments.yaml = Deployment\Keycloak\Deployments.yaml
+		Deployment\Keycloak\DestinationRule.yaml = Deployment\Keycloak\DestinationRule.yaml
+		Deployment\Keycloak\Namespace.yaml = Deployment\Keycloak\Namespace.yaml
+		Deployment\Keycloak\Secrets.yaml = Deployment\Keycloak\Secrets.yaml
+		Deployment\Keycloak\PostgresVC.yaml = Deployment\Keycloak\PostgresVC.yaml
+		Deployment\Keycloak\Services.yaml = Deployment\Keycloak\Services.yaml
+		Deployment\Keycloak\VirtualService.yaml = Deployment\Keycloak\VirtualService.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kiali", "Kiali", "{36B31709-DE61-4650-8AB6-3FC2B9166B94}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Infrastructure\Kiali\Deployment.yaml = Deployment\Infrastructure\Kiali\Deployment.yaml
+		Deployment\Infrastructure\Kiali\Secrets.yaml = Deployment\Infrastructure\Kiali\Secrets.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +135,10 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8106C1D3-7BA0-414A-87EF-07F1A94EF73C} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
 		{AE512821-54CD-4882-AA13-4ECC2F0608B7} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
+		{9BCC03F6-7681-4981-8BD2-06AE9785BDDF} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
+		{33D00CEC-A115-4F68-9B0A-DF4233851AA6} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
+		{1338792E-BA28-4970-93CF-E9482DD8FB36} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
+		{36B31709-DE61-4650-8AB6-3FC2B9166B94} = {33D00CEC-A115-4F68-9B0A-DF4233851AA6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75771789-CAED-4973-909B-0F8A814C8EFD}

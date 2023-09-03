@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: auth
+  labels:
+    app: postgres-db
+    service: postgres-db
+spec:
+  selector:
+    app: postgres-db
+  ports:
+  - name: tcp
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openidconnect
+  namespace: auth
+spec:
+  selector:
+    app: openidconnect
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
