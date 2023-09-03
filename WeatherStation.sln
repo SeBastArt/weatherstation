@@ -30,7 +30,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keycloak", "Keycloak", "{1338792E-BA28-4970-93CF-E9482DD8FB36}"
 	ProjectSection(SolutionItems) = preProject
 		Deployment\Keycloak\Deployments.yaml = Deployment\Keycloak\Deployments.yaml
-		Deployment\Keycloak\DestinationRule.yaml = Deployment\Keycloak\DestinationRule.yaml
 		Deployment\Keycloak\Namespace.yaml = Deployment\Keycloak\Namespace.yaml
 		Deployment\Keycloak\Secrets.yaml = Deployment\Keycloak\Secrets.yaml
 		Deployment\Keycloak\PostgresVC.yaml = Deployment\Keycloak\PostgresVC.yaml
