@@ -15,32 +15,47 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InputApi", "InputApi", "{9BCC03F6-7681-4981-8BD2-06AE9785BDDF}"
 	ProjectSection(SolutionItems) = preProject
-		Deployment\InputApi\deployment.yaml = Deployment\InputApi\deployment.yaml
-		Deployment\InputApi\influxdb.yaml = Deployment\InputApi\influxdb.yaml
-		Deployment\InputApi\influxSecretExample.yaml = Deployment\InputApi\influxSecretExample.yaml
-		Deployment\InputApi\service.yaml = Deployment\InputApi\service.yaml
+		Deployment\InputApi\Deployment.yaml = Deployment\InputApi\Deployment.yaml
+		Deployment\InputApi\DestinationRule.yaml = Deployment\InputApi\DestinationRule.yaml
+		Deployment\InputApi\Service.yaml = Deployment\InputApi\Service.yaml
+		Deployment\InputApi\VirtualService.yaml = Deployment\InputApi\VirtualService.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{33D00CEC-A115-4F68-9B0A-DF4233851AA6}"
 	ProjectSection(SolutionItems) = preProject
 		Deployment\Infrastructure\Gateway.yaml = Deployment\Infrastructure\Gateway.yaml
+		Deployment\Infrastructure\Namespaces.yaml = Deployment\Infrastructure\Namespaces.yaml
 		Deployment\Infrastructure\VirtualServices.yaml = Deployment\Infrastructure\VirtualServices.yaml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keycloak", "Keycloak", "{1338792E-BA28-4970-93CF-E9482DD8FB36}"
-	ProjectSection(SolutionItems) = preProject
-		Deployment\Keycloak\Deployments.yaml = Deployment\Keycloak\Deployments.yaml
-		Deployment\Keycloak\Namespace.yaml = Deployment\Keycloak\Namespace.yaml
-		Deployment\Keycloak\Secrets.yaml = Deployment\Keycloak\Secrets.yaml
-		Deployment\Keycloak\PostgresVC.yaml = Deployment\Keycloak\PostgresVC.yaml
-		Deployment\Keycloak\Services.yaml = Deployment\Keycloak\Services.yaml
-		Deployment\Keycloak\VirtualService.yaml = Deployment\Keycloak\VirtualService.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kiali", "Kiali", "{36B31709-DE61-4650-8AB6-3FC2B9166B94}"
 	ProjectSection(SolutionItems) = preProject
 		Deployment\Infrastructure\Kiali\Deployment.yaml = Deployment\Infrastructure\Kiali\Deployment.yaml
 		Deployment\Infrastructure\Kiali\Secrets.yaml = Deployment\Infrastructure\Kiali\Secrets.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InfluxDb", "InfluxDb", "{C02E6F0D-763F-4938-B932-52BC249E0DE4}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Infrastructure\InfluxDb\Deployment.yaml = Deployment\Infrastructure\InfluxDb\Deployment.yaml
+		Deployment\Infrastructure\InfluxDb\Service.yaml = Deployment\Infrastructure\InfluxDb\Service.yaml
+		Deployment\Infrastructure\InfluxDb\Secret.yaml = Deployment\Infrastructure\InfluxDb\Secret.yaml
+		Deployment\Infrastructure\InfluxDb\VolumeClaim.yaml = Deployment\Infrastructure\InfluxDb\VolumeClaim.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keycloak", "Keycloak", "{F813FABF-E1E1-458C-B1F7-82C1B7949BF6}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Infrastructure\Keycloak\Deployment.yaml = Deployment\Infrastructure\Keycloak\Deployment.yaml
+		Deployment\Infrastructure\Keycloak\Secret.yaml = Deployment\Infrastructure\Keycloak\Secret.yaml
+		Deployment\Infrastructure\Keycloak\VirtualService.yaml = Deployment\Infrastructure\Keycloak\VirtualService.yaml
+		Deployment\Infrastructure\Keycloak\Service.yaml = Deployment\Infrastructure\Keycloak\Service.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postgres", "Postgres", "{BF719339-90BB-4F57-8B5E-F25EB0B758C9}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Infrastructure\Postgres\VolumeClaim.yaml = Deployment\Infrastructure\Postgres\VolumeClaim.yaml
+		Deployment\Infrastructure\Postgres\Deployment.yaml = Deployment\Infrastructure\Postgres\Deployment.yaml
+		Deployment\Infrastructure\Postgres\Secret.yaml = Deployment\Infrastructure\Postgres\Secret.yaml
+		Deployment\Infrastructure\Postgres\Service.yaml = Deployment\Infrastructure\Postgres\Service.yaml
 	EndProjectSection
 EndProject
 Global
@@ -136,8 +151,10 @@ Global
 		{AE512821-54CD-4882-AA13-4ECC2F0608B7} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
 		{9BCC03F6-7681-4981-8BD2-06AE9785BDDF} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
 		{33D00CEC-A115-4F68-9B0A-DF4233851AA6} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
-		{1338792E-BA28-4970-93CF-E9482DD8FB36} = {1305C9CA-6C1E-48DF-AAB0-25C238E4526B}
 		{36B31709-DE61-4650-8AB6-3FC2B9166B94} = {33D00CEC-A115-4F68-9B0A-DF4233851AA6}
+		{C02E6F0D-763F-4938-B932-52BC249E0DE4} = {33D00CEC-A115-4F68-9B0A-DF4233851AA6}
+		{F813FABF-E1E1-458C-B1F7-82C1B7949BF6} = {33D00CEC-A115-4F68-9B0A-DF4233851AA6}
+		{BF719339-90BB-4F57-8B5E-F25EB0B758C9} = {33D00CEC-A115-4F68-9B0A-DF4233851AA6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75771789-CAED-4973-909B-0F8A814C8EFD}

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+  namespace: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+        - name: postgres-db
+          image: postgres:latest
+          volumeMounts:
+            - mountPath: /data
+              name: postgres-volume
+          envFrom:
+          - secretRef:
+              name: postgres-credentials
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-pvc

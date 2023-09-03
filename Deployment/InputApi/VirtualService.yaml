@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: weatherstation-vs
+  namespace: weatherstation
+spec:
+  hosts:
+  - "weatherstation.wondering-developer.de"
+  gateways:
+  - default/ingress-gateway
+  http:
+  - route:
+    - destination:
+        host: frontend
+        subset: v1
+        port:
+          number: 80
