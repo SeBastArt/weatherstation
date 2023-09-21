@@ -10,6 +10,7 @@ src/InputApi/bin/
 src/InputApi/obj/
 src/EPaperClient/__vm/
 src/EPaperClient/obj/
+__vm/
 bin/
 obj/
 *.htm
