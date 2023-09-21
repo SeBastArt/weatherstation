@@ -11,3 +11,10 @@ metadata:
   name: weatherstation
   labels:
     istio-injection: enabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mosquitto
+  labels:
+    istio-injection: enabled

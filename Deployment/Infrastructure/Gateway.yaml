@@ -16,3 +16,9 @@ spec:
       credentialName: telemetry-gw-cert
     hosts:
     - "*.wondering-developer.de"
+  - port:
+      number: 1883
+      name: tcp
+      protocol: TCP
+    hosts:
+    - "mosquitto.wondering-developer.de"

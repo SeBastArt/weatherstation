@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-config
+  namespace: mosquitto
+data:
+  mosquitto.conf: |
+
+    persistence true
+    persistence_location /mosquitto/data
+    log_dest file /mosquitto/log/mosquitto.log
+
+    listener 1883
+    protocol mqtt
+
+    allow_anonymous true
+    password_file /mosquitto/config/password.txt
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-passwordmosquitto-password
+  namespace: mosquitto
+  labels:
+    app: mosquitto
+data:
+  password.txt: |
+    andreas:$7$101$vwlVgpqrtArRFPa9$GAsFWuhDiT7WgowVGCfqCRpWY7SrumYXvTNGuvm92ZZoeH1cMtPln6DuQoWzDbq5gSLrziDGYFYKYUyrHCDHsw==
+    sebastart:$7$101$1VuhyZgmKNly1VvkD90A08hJc6ZNXIQFdMJ6PRxvXgaGZGVJR4Y38LuMOvC9kahNyQD9hKLPMo+qhjtJZnxCR1zosXKFgHA0HgZ2jDw==
