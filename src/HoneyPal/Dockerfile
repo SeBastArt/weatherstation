@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["HoneyPal/HoneyPal.csproj", "src/HoneyPal/"]
+COPY ["HoneyPal/HoneyPal.csproj", "HoneyPal/"]
 RUN dotnet restore "HoneyPal/HoneyPal.csproj"
 COPY . .
 WORKDIR "/src/HoneyPal"
