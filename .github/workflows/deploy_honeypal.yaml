@@ -7,13 +7,13 @@ on:
       baseversion:
         description: 'Image base version'
         required: true
-        default: '0.5'
+        default: '0.1'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE: sebastart/HoneyPal
+      DOCKER_IMAGE: sebastart/honeypal
       DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
       -
@@ -56,7 +56,7 @@ jobs:
             --output type=image,push=true
   deploy:
     env:
-      DOCKER_IMAGE: sebastart/HoneyPal
+      DOCKER_IMAGE: sebastart/honeypal
     name: Deploy
     needs: [ build ]
     runs-on: ubuntu-latest
