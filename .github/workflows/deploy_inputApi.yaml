@@ -1,4 +1,4 @@
-name: deploy_frontend
+name: InputApi-Deployment
 
 on:
   # Allow to run the workflow manually from Actions tab
