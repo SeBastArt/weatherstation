@@ -1,11 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using MQTTnet;
 using MQTTnet.Client;
 using Newtonsoft.Json;
-using PayPalProxy.Dtos;
+using Newtonsoft.Json.Linq;
+using HoneyPal.Dtos;
 
-namespace PayPalProxy.Services;
+namespace HoneyPal.Services;
 
 public interface IMqttClientService
 {
@@ -17,11 +19,11 @@ public class MqttClientService : IMqttClientService, IDisposable
     private readonly string _hmacKey;
     private readonly IMqttClient _mqttclient;
 
-    public MqttClientService(IConfiguration config)
+    public MqttClientService(IConfiguration config, IWebHostEnvironment env)
     {
         try
         {
-            _hmacKey = config.GetValue<string>("HmacKey");
+            _hmacKey = config.GetValue<string>("HMAC_SECRET_KEY");
             var broker = config.GetValue<string>("Mqtt:Broker");
             int? port = config.GetValue<int>("Mqtt:Port");
             var mqttClientOptions = new MqttClientOptionsBuilder()

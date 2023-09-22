@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mosquitto
-  namespace: mosquitto
+  namespace: honeypal
   labels:
     app: mosquitto
     version: v1

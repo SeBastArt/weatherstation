@@ -4,7 +4,8 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "inputapi": "StartDebugging"
+        "inputapi": "StartDebugging",
+        "honeypal": "StartDebugging"
       }
     }
   }

@@ -21,4 +21,4 @@ spec:
       name: tcp
       protocol: TCP
     hosts:
-    - "mosquitto.wondering-developer.de"
+    - "mqtt.wondering-developer.de"

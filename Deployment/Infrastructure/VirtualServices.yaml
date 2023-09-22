@@ -93,13 +93,13 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: mosquitto-vs
-  namespace: mosquitto
+  name: mqtt-vs
+  namespace: honeypal
 spec:
   hosts:
-  - "mosquitto.wondering-developer.de"
+  - "mqtt.wondering-developer.de"
   gateways:
-  - default/mosquitto-gateway
+  - default/ingress-gateway
   tcp:
   - match:
     - port: 1883

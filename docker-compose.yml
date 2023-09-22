@@ -28,3 +28,9 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=organization
       - DOCKER_INFLUXDB_INIT_BUCKET=bucket
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-secret-dev-token
+  honeypal:
+    image: ${DOCKER_REGISTRY-}honeypal
+    build:
+      context: .
+      dockerfile: src/HoneyPal/Dockerfile
+

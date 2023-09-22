@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PayPalProxy.Dtos;
-using PayPalProxy.Services;
+using HoneyPal.Dtos;
+using HoneyPal.Services;
 
-namespace PayPalProxy.Controllers
+namespace HoneyPal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

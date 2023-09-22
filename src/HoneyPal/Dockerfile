@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/PayPalProxy/PayPalProxy.csproj", "src/PayPalProxy/"]
-RUN dotnet restore "src/PayPalProxy/PayPalProxy.csproj"
+COPY ["src/HoneyPal/HoneyPal.csproj", "src/HoneyPal/"]
+RUN dotnet restore "src/HoneyPal/HoneyPal.csproj"
 COPY . .
-WORKDIR "/src/src/PayPalProxy"
-RUN dotnet build "PayPalProxy.csproj" -c Release -o /app/build
+WORKDIR "/src/src/HoneyPal"
+RUN dotnet build "HoneyPal.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "PayPalProxy.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "HoneyPal.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PayPalProxy.dll"]
+ENTRYPOINT ["dotnet", "HoneyPal.dll"]

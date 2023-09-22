@@ -1,4 +1,4 @@
-﻿namespace PayPalProxy.Dtos
+﻿namespace HoneyPal.Dtos
 {
     public class SecureMessage
     {

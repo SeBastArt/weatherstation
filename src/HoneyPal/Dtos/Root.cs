@@ -1,4 +1,4 @@
-﻿namespace PayPalProxy.Dtos
+﻿namespace HoneyPal.Dtos
 {
     using System;
     using System.Collections.Generic;

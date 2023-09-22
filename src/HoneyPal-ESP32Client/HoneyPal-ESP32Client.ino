@@ -4,15 +4,15 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define MQTT_MAX_PACKET_SIZE 1024  // Erh�he die Puffergr��e auf 1 KB
+#define MQTT_MAX_PACKET_SIZE 1024  // Erh?he die Puffergr??e auf 1 KB
 
 const char* ssid = "wifi_ssid";
 const char* password = "wifi_password";
-String secretKey = "very_secret_key";
+String secretKey = "super_secret_key";
 
 /* Server and IP address ------------------------------------------------------*/
-IPAddress my_ip; 
-const char* mqtt_broker = "mqtt.broker.de";
+IPAddress my_ip;
+const char* mqtt_broker = "";
 const char* topic = "payment/receive";
 const int mqtt_port = 1883;
 
@@ -67,7 +67,7 @@ auto update_date_time() -> void
 bool IsCrcValid(const String& payload, String crc)
 {
     mbedtls_md_context_t ctx;
-    
+
     const size_t payloadLength = payload.length();
     mbedtls_md_init(&ctx);
     mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
@@ -92,10 +92,10 @@ bool IsCrcValid(const String& payload, String crc)
 bool IsHMACValid(String payload, String key, String hmac) {
     byte hmac_result[32];
     mbedtls_md_context_t ctx;
-    
+
     const int payloadLength = payload.length();
     const int keyLength = key.length();
-    
+
     mbedtls_md_init(&ctx);
     mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
     mbedtls_md_hmac_starts(&ctx, reinterpret_cast<const unsigned char*>(key.c_str()), keyLength);
@@ -113,7 +113,7 @@ bool IsHMACValid(String payload, String key, String hmac) {
     }
     result.toLowerCase();
     hmac.toLowerCase();
-    
+
     result.toLowerCase();
     hmac.toLowerCase();
 
@@ -132,7 +132,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("]: ");
 
     // get time first, for correct timestamp
-	time_t now;
+    time_t now;
     time(&now);
 
     // format payload to String
@@ -157,7 +157,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     String timestamp = payloadStr.substring(0, firstColon);
     String type = payloadStr.substring(firstColon + 1, secondColon);
     const String crc = payloadStr.substring(secondColon + 1);
-   
+
     //Hmac
     String hmac = doc["Hmac"].as<String>();
 
@@ -168,7 +168,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (time_diff >= 5)
     {
         Serial.println("Timestamp not match - request discarded");
-    	return;
+        return;
     }
 
     // Test CRC - prevent manipulations
@@ -182,7 +182,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (!IsHMACValid(payloadStr, secretKey, hmac))
     {
         Serial.println("HMAC is not correct - request discarded");
-    	return;
+        return;
     }
 
     Serial.println("request is valid! - " + type);

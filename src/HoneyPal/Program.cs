@@ -1,5 +1,4 @@
-using Microsoft.Extensions.Configuration;
-using PayPalProxy.Services;
+using HoneyPal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
