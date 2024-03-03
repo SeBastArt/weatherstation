@@ -11,14 +11,10 @@ public class InfluxDbService
     {
         _token = configuration.GetValue<string>("INFLUXDB_INIT_ADMIN_TOKEN");
         _host = configuration.GetValue<string>("InfluxDB:Host");
-        Console.WriteLine($"InfluxDbService: {_host}");
-        Console.WriteLine($"InfluxDbToken: {_token}");
     }
 
     public void Write(Action<WriteApi> action)
     {
-        Console.WriteLine($"InfluxDbService: {_host}");
-        Console.WriteLine($"InfluxDbToken: {_token}");
         using var client = new InfluxDBClient(_host, _token);
         using var write = client.GetWriteApi();
         action(write);
