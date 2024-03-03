@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: influxdb
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespace.name }}
   labels:
     app: influxdb
     service: influxdb

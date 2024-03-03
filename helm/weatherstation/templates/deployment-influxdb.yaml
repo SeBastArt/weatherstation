@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: influxdb-deployment
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespace.name }}
   labels:
     app: influxdb
     version: {{ .Values.influxdb.version | default "v1" }}

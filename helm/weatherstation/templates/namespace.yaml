@@ -1,0 +1,6 @@
+﻿apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name }}
+  labels:
+    istio.io/rev: {{ .Values.istio.revision }}

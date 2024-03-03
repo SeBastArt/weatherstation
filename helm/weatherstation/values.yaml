@@ -1,5 +1,7 @@
 namespace:
   name: weatherstation
+istio:
+  revision: default
 
 frontend:
   image: sebastart/weatherstation:latest
