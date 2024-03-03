@@ -25,9 +25,9 @@ public class ThingsNetworkController : ControllerBase
     public ThingsNetworkController(InfluxDbService service, IConfiguration configuration)
     {
         _service = service;
-        _bucket = configuration.GetValue<string>("INFLUXDB_INIT_BUCKET");
-        _organisation = configuration.GetValue<string>("INFLUXDB_INIT_ORG");
-        _token = configuration.GetValue<string>("INFLUXDB_INIT_ADMIN_TOKEN");
+        _bucket = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_BUCKET");
+        _organisation = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_ORG");
+        _token = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_ADMIN_TOKEN");
         _host = configuration.GetValue<string>("InfluxDB:Host");
     }
 

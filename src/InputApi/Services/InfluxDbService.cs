@@ -9,10 +9,8 @@ public class InfluxDbService
 
     public InfluxDbService(IConfiguration configuration)
     {
-        _token = configuration.GetValue<string>("INFLUXDB_INIT_ADMIN_TOKEN");
+        _token = configuration.GetValue<string>("DOCKER_INFLUXDB_INIT_ADMIN_TOKEN");
         _host = configuration.GetValue<string>("InfluxDB:Host");
-        Console.WriteLine($"InfluxDbService Host: {_host}");
-        Console.WriteLine($"InfluxDbService Token: {_token}");
     }
 
     public void Write(Action<WriteApi> action)
@@ -24,8 +22,6 @@ public class InfluxDbService
 
     public async Task<T> QueryAsync<T>(Func<QueryApi, Task<T>> action)
     {
-        Console.WriteLine($"InfluxDbService Host: {_host}");
-        Console.WriteLine($"InfluxDbService Token: {_token}");
         using var client = new InfluxDBClient(_host, _token);
         var query = client.GetQueryApi();
         return await action(query);
