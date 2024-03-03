@@ -1,0 +1,4 @@
+apiVersion: v2
+name: weatherstation
+description: A Helm chart for the Weather Station application
+version: 1.0.0

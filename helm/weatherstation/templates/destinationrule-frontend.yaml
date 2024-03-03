@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: weatherstation
+  namespace: {{ .Values.namespace.name }}
+spec:
+  host: frontend
+  subsets:
+  - name: {{ .Values.influxdb.version | default "v1" }}
+    labels:
+      version: {{ .Values.influxdb.version | default "v1" }}
+  trafficPolicy:
+    tls:
+      mode: DISABLE
