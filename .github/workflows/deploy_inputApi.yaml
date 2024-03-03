@@ -62,17 +62,25 @@ jobs:
         with:
           version: 'v1.20.0'
 
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
       - name: Configure Kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
-      - name: Deploy to Kubernetes cluster
+      - name: Deploy with Helm
         run: |
-          kubectl apply -f Deployment/InputApi/Deployment.yaml
-          kubectl apply -f Deployment/InputApi/Service.yaml
-          kubectl apply -f Deployment/InputApi/VirtualService.yaml
-          kubectl apply -f Deployment/InputApi/DestinationRule.yaml
+          helm upgrade --install weatherstation ./helm/weatherstation \
+            --namespace weatherstation \
+            --create-namespace \
+            --set influxdb.secrets.INFLUXDB_INIT_USERNAME=${{ secrets.INFLUXDB_USERNAME }},\
+            influxdb.secrets.INFLUXDB_INIT_PASSWORD=${{ secrets.INFLUXDB_PASSWORD }},\
+            influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN=${{ secrets.INFLUXDB_ADMIN_TOKEN }}
 
       - name: Verify deployment
         run: |
