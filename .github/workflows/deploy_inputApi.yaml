@@ -76,7 +76,7 @@ jobs:
       - name: Deploy with Helm
         run: |
           chmod 600 /home/runner/.kube/config
-          helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME=${{ secrets.INFLUXDB_USERNAME }}, influxdb.secrets.INFLUXDB_INIT_PASSWORD=${{ secrets.INFLUXDB_PASSWORD }}, influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN=${{ secrets.INFLUXDB_ADMIN_TOKEN }}
+          helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME=${{ secrets.INFLUXDB_USERNAME }}, influxdb.secrets.INFLUXDB_INIT_PASSWORD=${{ secrets.INFLUXDB_INIT_PASSWORD }}, influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN=${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}
     
       - name: Verify deployment
         run: |
