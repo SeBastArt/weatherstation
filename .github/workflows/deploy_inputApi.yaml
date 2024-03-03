@@ -36,6 +36,7 @@ jobs:
 
 
   deploy:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -59,8 +60,6 @@ jobs:
           
       - name: Deploy with Helm
         run: |
-          kubectl create namespace weatherstation
-          kubectl label namespace weatherstation istio-injection=enabled --overwrite=true
           chmod 600 /home/runner/.kube/config
           env:
             INFLUXDB_INIT_USERNAME: ${{ secrets.INFLUXDB_INIT_USERNAME }}
