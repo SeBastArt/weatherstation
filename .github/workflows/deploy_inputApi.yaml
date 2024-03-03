@@ -1,7 +1,6 @@
 name: InputApi-Deployment
 
 on:
-  # Allow to run the workflow manually from Actions tab
   workflow_dispatch:
     inputs:
       baseversion:
@@ -16,68 +15,64 @@ jobs:
       DOCKER_IMAGE: sebastart/weatherstation
       DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
-      -
-        name: Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      -
-        name: Set up QEMU
+
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Prepare
-        if: success()
+
+      - name: Prepare
         id: prepare
         run: |
-          echo ::set-output name=docker_platform::$DOCKER_TARGET_PLATFORM
-          echo ::set-output name=docker_image::$DOCKER_IMAGE
-          echo ::set-output name=version::${{ github.event.inputs.baseversion }}.$GITHUB_RUN_NUMBER
-      -
-        name: Log into registry docker hub
-        if: |
-          success() && 
-          github.event_name != 'pull_request'
+          echo "DOCKER_PLATFORM=${DOCKER_TARGET_PLATFORM}" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV
+          VERSION="${{ github.event.inputs.baseversion }}.$GITHUB_RUN_NUMBER"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo ::set-output name=version::$VERSION
+
+      - name: Log into registry docker hub
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      -
-        name: Build docker image
-        if: success()
+      - name: Build and push docker image
         working-directory: src
         run: |
           docker buildx build . \
-            --platform ${{ steps.prepare.outputs.docker_platform }} \
+            --platform $DOCKER_TARGET_PLATFORM \
             --file ./InputApi/Dockerfile \
-            --tag ${{ steps.prepare.outputs.docker_image }}:${{ github.sha }} \
-            --tag ${{ steps.prepare.outputs.docker_image }}:latest \
+            --tag $DOCKER_IMAGE:${{ steps.prepare.outputs.version }} \
+            --tag $DOCKER_IMAGE:latest \
             --output type=image,push=true
+
   deploy:
-    env:
-      DOCKER_IMAGE: sebastart/weatherstation
-    name: Deploy
-    needs: [ build ]
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v2
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.KUBERNETES_DOMAIN }}
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Deploy to the Kubernetes cluster
-        uses: azure/k8s-deploy@v1
+      - name: Set up Kubernetes context
+        uses: actions/setup-kubectl@v1
         with:
-          namespace: weatherstation
-          manifests: |
-            Deployment/InputApi/Deployment.yaml
-            Deployment/InputApi/Service.yaml
-            Deployment/InputApi/VirtualService.yaml
-            Deployment/InputApi/DestinationRule.yaml
-          images: |
-            sebastart/weatherstation:${{ github.sha }}  
+          version: 'latest'
+
+      - name: Configure Kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Deploy to Kubernetes cluster
+        run: |
+          kubectl apply -f Deployment/InputApi/Deployment.yaml
+          kubectl apply -f Deployment/InputApi/Service.yaml
+          kubectl apply -f Deployment/InputApi/VirtualService.yaml
+          kubectl apply -f Deployment/InputApi/DestinationRule.yaml
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/<DEPLOYMENT_NAME> -n weatherstation
