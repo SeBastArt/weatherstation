@@ -34,6 +34,8 @@ jobs:
           echo ::set-output name=version::$VERSION
 
 
+    
+
   deploy:
 
     runs-on: ubuntu-latest
@@ -64,7 +66,7 @@ jobs:
           INFLUXDB_INIT_ADMIN_TOKEN: ${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}
         run: |
           chmod 600 /home/runner/.kube/config
-          helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME="$INFLUXDB_INIT_USERNAME",influxdb.secrets.INFLUXDB_INIT_PASSWORD="$INFLUXDB_INIT_PASSWORD",influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="$INFLUXDB_INIT_ADMIN_TOKEN"
+          helm upgrade --install weatherstation ./helm/weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME="$INFLUXDB_INIT_USERNAME",influxdb.secrets.INFLUXDB_INIT_PASSWORD="$INFLUXDB_INIT_PASSWORD",influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="$INFLUXDB_INIT_ADMIN_TOKEN"
             
       - name: Verify deployment
         run: |
