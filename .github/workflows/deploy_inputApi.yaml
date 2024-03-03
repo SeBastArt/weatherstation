@@ -35,6 +35,7 @@ jobs:
 
 
   deploy:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -63,7 +64,7 @@ jobs:
           INFLUXDB_INIT_ADMIN_TOKEN: ${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}
         run: |
           chmod 600 /home/runner/.kube/config
-          run: helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --set influxdb.secrets.INFLUXDB_INIT_USERNAME="$INFLUXDB_INIT_USERNAME",influxdb.secrets.INFLUXDB_INIT_PASSWORD="$INFLUXDB_INIT_PASSWORD",influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="$INFLUXDB_INIT_ADMIN_TOKEN"
+          helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME="$INFLUXDB_INIT_USERNAME",influxdb.secrets.INFLUXDB_INIT_PASSWORD="$INFLUXDB_INIT_PASSWORD",influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="$INFLUXDB_INIT_ADMIN_TOKEN"
             
       - name: Verify deployment
         run: |
