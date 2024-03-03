@@ -72,16 +72,12 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-
+          
       - name: Deploy with Helm
         run: |
-          helm upgrade --install weatherstation ./helm/weatherstation \
-            --namespace weatherstation \
-            --create-namespace \
-            --set influxdb.secrets.INFLUXDB_INIT_USERNAME=${{ secrets.INFLUXDB_USERNAME }},\
-            influxdb.secrets.INFLUXDB_INIT_PASSWORD=${{ secrets.INFLUXDB_PASSWORD }},\
-            influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN=${{ secrets.INFLUXDB_ADMIN_TOKEN }}
-
+          chmod 600 /home/runner/.kube/config
+          helm upgrade --install weatherstation ./helm/weatherstation --namespace weatherstation --create-namespace --set influxdb.secrets.INFLUXDB_INIT_USERNAME=${{ secrets.INFLUXDB_USERNAME }}, influxdb.secrets.INFLUXDB_INIT_PASSWORD=${{ secrets.INFLUXDB_PASSWORD }}, influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN=${{ secrets.INFLUXDB_ADMIN_TOKEN }}
+    
       - name: Verify deployment
         run: |
           kubectl rollout status deployment/frontend -n weatherstation
