@@ -48,7 +48,7 @@ jobs:
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
             --file ./InputApi/Dockerfile \
-            --tag $DOCKER_IMAGE:${{ steps.prepare.outputs.version }} \
+            --tag $DOCKER_IMAGE:${{ env.VERSION }} \
             --tag $DOCKER_IMAGE:latest \
             --output type=image,push=true
 
