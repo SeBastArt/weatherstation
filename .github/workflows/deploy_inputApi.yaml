@@ -30,9 +30,10 @@ jobs:
           echo "DOCKER_PLATFORM=${DOCKER_TARGET_PLATFORM}" >> $GITHUB_ENV
           echo "DOCKER_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV
           # Get the current version
-          VERSION="v$(echo "${{ github.event.inputs.baseversion }}" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{$NF=sprintf("%0*d", length($NF), ($NF+1)%100); print}')"
+          BASE_VERSION="${{ github.event.inputs.baseversion }}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
+          VERSION="v${BASE_VERSION}.${BUILD_NUMBER}"
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo ::set-output name=version::$VERSION
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
