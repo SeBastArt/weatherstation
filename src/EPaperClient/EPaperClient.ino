@@ -27,12 +27,12 @@
 #define ENABLE_GxEPD2_GFX 0
 
 
-const char* ssid = "wifi_ssid";
-const char* password = "wifi_password";
-const String host = "https://host.de";
+const char* ssid = "wlansecure";
+const char* password = "schwarzweiss";
+const String host = "https://weatherstation.wondering-developer.de";
 const String http_port = "443";
-const String resource = "/api/resource/single";
-const String array_resource = "/api/resource/array";
+const String resource = "/api/ThingsNetwork/GetTemperature";
+const String array_resource = "/api/ThingsNetwork/GetTemperaturesOfToday";
 
 constexpr int date_start_x = 20;
 constexpr int date_start_y = 130;
@@ -143,7 +143,7 @@ float fetch_data_from_api(const char* eui)
 
 auto write_date(const UWORD x_start, const UWORD y_start) -> void
 {
-    // Erstelle einen formatierten Text im gewünschten Format
+    // Erstelle einen formatierten Text im gewï¿½nschten Format
     // Annahme: Der formatierte Text passt in 50 Zeichen
     char formatted_time[50];
     strftime(formatted_time, sizeof(formatted_time), "%a,%d.%m.%Y", &time_info);
@@ -381,9 +381,6 @@ void setup()
     }
     //outside: 0004A30B001FB02B
     draw_bar_histogram(values, numberOfElements, lineData, numLineValues, 0 , display.height() / 3, display.width(), display.height() / 3);
-   
-    //write_time(time_start_x, time_start_y);
-	//write_date(date_start_x, date_start_y);
 
     write_room("Wohnzimmer", fetch_data_from_api("0004A30B001FDC0B"), 0, (EPD_7IN5_V2_HEIGHT / 3));
     write_room("Simon", fetch_data_from_api("A84041000181854C"), (EPD_7IN5_V2_WIDTH / 3), (EPD_7IN5_V2_HEIGHT / 3));
@@ -438,9 +435,6 @@ void loop()
     size_t numLineValues = sizeof(lineData) / sizeof(lineData[0]);
 
     draw_bar_histogram(values, numberOfElements, lineData, numLineValues, 0, display.height() / 3, display.width(), display.height() / 3);
-
-    //write_time(time_start_x, time_start_y);
-    //write_date(date_start_x, date_start_y);
 
     write_room("Wohnzimmer", fetch_data_from_api("0004A30B001FDC0B"), 0, (EPD_7IN5_V2_HEIGHT / 3));
     write_room("Simon", fetch_data_from_api("A84041000181854C"), (EPD_7IN5_V2_WIDTH / 3), (EPD_7IN5_V2_HEIGHT / 3));

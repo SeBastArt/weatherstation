@@ -6,13 +6,13 @@
 
 #define MQTT_MAX_PACKET_SIZE 1024  // Erh?he die Puffergr??e auf 1 KB
 
-const char* ssid = "wifi_ssid";
-const char* password = "wifi_password";
-String secretKey = "super_secret_key";
+const char* ssid = "wlansecure";
+const char* password = "schwarzweiss";
+String secretKey = "zYQuEpCGpnbMauktZsUEMm9iKE9DQqoWyeyemvqJ";
 
 /* Server and IP address ------------------------------------------------------*/
 IPAddress my_ip;
-const char* mqtt_broker = "";
+const char* mqtt_broker = "mqtt.wondering-developer.de";
 const char* topic = "payment/receive";
 const int mqtt_port = 1883;
 

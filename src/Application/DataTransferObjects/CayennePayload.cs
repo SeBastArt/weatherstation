@@ -1,4 +1,4 @@
-﻿namespace InputApi.DataTransferObjects;
+﻿namespace Application.DataTransferObjects;
 
 public class CayennePayload
 {

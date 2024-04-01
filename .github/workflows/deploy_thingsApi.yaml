@@ -1,4 +1,4 @@
-name: InputApi-Deployment
+name: ThingsApi-Deployment
 
 on:
   workflow_dispatch:
@@ -47,7 +47,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ./InputApi/Dockerfile \
+            --file ./ThingsApi/Dockerfile \
             --tag $DOCKER_IMAGE:${{ env.VERSION }} \
             --tag $DOCKER_IMAGE:latest \
             --output type=image,push=true

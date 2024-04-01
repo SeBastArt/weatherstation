@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace InputApi.DataTransferObjects;
+namespace Application.DataTransferObjects;
 
 public class TheThingsPayload<T>
 {

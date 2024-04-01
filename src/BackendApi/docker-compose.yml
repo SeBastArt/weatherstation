@@ -1,34 +1,20 @@
 version: '3.4'
 
 services:
-  backendapi:
-    networks:
-      - default
+  backendApi:
     build:
-      context: .
-      dockerfile: src/BackendApi/Dockerfile
+      context: ../
+      dockerfile: BackendApi/Dockerfile
     ports:
       - "5002:8080"
-      - "5003:8081"
     environment:
       - InfluxDB__Host=${INFLUXDB_HOST}
       - InfluxDB__AdminToken=${INFLUXDB_ADMIN_TOKEN}
       - InfluxDB__Bucket=${INFLUXDB_BUCKET}
       - InfluxDB__Organization=${INFLUXDB_ORG}
-  thingsapi:
     networks:
       - default
-    build:
-      context: .
-      dockerfile: src/ThingsApi/Dockerfile
-    ports:
-      - "5000:8080"
-      - "5001:8081"
-    environment:
-      - InfluxDB__Host=${INFLUXDB_HOST}
-      - InfluxDB__AdminToken=${INFLUXDB_ADMIN_TOKEN}
-      - InfluxDB__Bucket=${INFLUXDB_BUCKET}
-      - InfluxDB__Organization=${INFLUXDB_ORG}
+
   influxdb:
     image: influxdb:latest
     container_name: influxdb
