@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/BackendApi/BackendApi.csproj", "src/BackendApi/"]
+COPY ["../BackendApi/BackendApi.csproj", "src/BackendApi/"]
 RUN dotnet restore "src/BackendApi/BackendApi.csproj"
 COPY . .
-WORKDIR "/src/src/BackendApi"
+WORKDIR "/src/BackendApi"
 RUN dotnet build "BackendApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Weatherstation/Weatherstation.csproj", "src/Weatherstation/"]
+COPY ["../Weatherstation/Weatherstation.csproj", "src/Weatherstation/"]
 RUN dotnet restore "src/Weatherstation/Weatherstation.csproj"
 COPY . .
-WORKDIR "/src/src/Weatherstation"
+WORKDIR "/src/Weatherstation"
 RUN dotnet build "Weatherstation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
