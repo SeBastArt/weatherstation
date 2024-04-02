@@ -8,8 +8,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY [".", "."]
+RUN dotnet clean "ThingsApi/ThingsApi.csproj" --configuration $BUILD_CONFIGURATION
 RUN dotnet restore "ThingsApi/ThingsApi.csproj"
-RUN dotnet build "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "ThingsApi/ThingsApi.csproj" --no-restore -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
