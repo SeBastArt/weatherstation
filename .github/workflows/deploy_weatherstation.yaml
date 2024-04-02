@@ -14,6 +14,9 @@ jobs:
     env:
       DOCKER_IMAGE: sebastart/thingsapi
       DOCKER_TARGET_PLATFORM: linux/arm64
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -27,14 +30,9 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          echo "DOCKER_PLATFORM=${DOCKER_TARGET_PLATFORM}" >> $GITHUB_ENV
-          echo "DOCKER_THINGS_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV
-          # Get the current version
-          BASE_VERSION="${{ github.event.inputs.baseversion }}"
-          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
-          VERSION="v${BASE_VERSION}.${BUILD_NUMBER}"
-          echo "THINGS_VERSION=${VERSION}" >> $GITHUB_ENV
-
+          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
+          echo "::set-output name=version::$VERSION"
+          
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
@@ -48,8 +46,8 @@ jobs:
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
             --file ./ThingsApi/Dockerfile \
-            --tag ${DOCKER_THINGS_IMAGE}:${VERSION} \
-            --tag ${DOCKER_THINGS_IMAGE}:latest \
+            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
           
   build_weatherstation:
@@ -57,6 +55,9 @@ jobs:
     env:
       DOCKER_IMAGE: sebastart/weatherstation
       DOCKER_TARGET_PLATFORM: linux/arm64
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -70,13 +71,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          echo "DOCKER_PLATFORM=${DOCKER_TARGET_PLATFORM}" >> $GITHUB_ENV
-          echo "DOCKER_FRONTEND_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV
-          # Get the current version
-          BASE_VERSION="${{ github.event.inputs.baseversion }}"
-          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
-          VERSION="v${BASE_VERSION}.${BUILD_NUMBER}"
-          echo "FRONTEND_VERSION=${VERSION}" >> $GITHUB_ENV
+          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
+          echo "::set-output name=version::$VERSION"
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
@@ -91,8 +87,8 @@ jobs:
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
             --file ./Weatherstation/Dockerfile \
-            --tag ${DOCKER_FRONTEND_IMAGE}:${VERSION} \
-            --tag ${DOCKER_FRONTEND_IMAGE}:latest \
+            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
           
   build_backend:
@@ -100,6 +96,9 @@ jobs:
     env:
       DOCKER_IMAGE: sebastart/weatherstation-backendapi
       DOCKER_TARGET_PLATFORM: linux/arm64
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -113,13 +112,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          echo "DOCKER_PLATFORM=${DOCKER_TARGET_PLATFORM}" >> $GITHUB_ENV
-          echo "DOCKER_BACKEND_IMAGE=${DOCKER_IMAGE}" >> $GITHUB_ENV
-          # Get the current version
-          BASE_VERSION="${{ github.event.inputs.baseversion }}"
-          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
-          VERSION="v${BASE_VERSION}.${BUILD_NUMBER}"
-          echo "BACKEND_VERSION=${VERSION}" >> $GITHUB_ENV
+          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
+          echo "::set-output name=version::$VERSION"
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
@@ -134,8 +128,8 @@ jobs:
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
             --file ./BackendApi/Dockerfile \
-            --tag ${DOCKER_BACKEND_IMAGE}:${VERSION} \
-            --tag ${DOCKER_BACKEND_IMAGE}:latest \
+            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
     
   
@@ -168,13 +162,13 @@ jobs:
         run: |
           chmod 600 /home/runner/.kube/config
           helm upgrade --install weatherstation ./helm/weatherstation \
-          --create-namespace \
-          --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
-          --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
-          --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
-          --set frontend.image=${DOCKER_FRONTEND_IMAGE}:${FRONTEND_VERSION} \
-          --set things.image=${DOCKER_THINGS_IMAGE}:${THINGS_VERSION} \
-          --set backend.image=${DOCKER_BACKEND_IMAGE}:${BACKEND_VERSION}
-          - name: Verify deployment
-                run: |
-                  kubectl rollout status deployment/frontend -n weatherstation
+            --create-namespace \
+            --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
+            --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
+            --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
+            --set frontend.image=${{ needs.build_weatherstation.outputs.image }}:${{ needs.build_weatherstation.outputs.version }} \
+            --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }} \
+            --set backend.image=${{ needs.build_backend.outputs.image }}:${{ needs.build_backend.outputs.version }}
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/frontend -n weatherstation
