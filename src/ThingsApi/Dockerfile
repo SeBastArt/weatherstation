@@ -1,25 +1,21 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["ThingsApi/ThingsApi.csproj", "src/ThingsApi/"]
-COPY ["Application/Application.csproj", "src/Application/"]
-RUN dotnet restore "src/ThingsApi/ThingsApi.csproj"
-COPY . "src/"
+COPY ["ThingsApi/ThingsApi.csproj", "ThingsApi/"]
+COPY ["Application/Application.csproj", "Application/"]
+RUN dotnet restore "ThingsApi/ThingsApi.csproj"
+COPY . .
 WORKDIR "/src/ThingsApi"
-RUN dotnet restore "ThingsApi.csproj"
-RUN dotnet build "ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "ThingsApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ThingsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ThingsApi.dll"]
+ENTRYPOINT ["dotnet", "InputApi.dll"]
