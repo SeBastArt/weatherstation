@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <RuntimeFrameworkVersion>8.0.0</RuntimeFrameworkVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-Weatherstation-0DF6B737-4EE5-4612-B470-4BD52049AA76</UserSecretsId>
