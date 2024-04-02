@@ -5,18 +5,18 @@ EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["ThingsApi/ThingsApi.csproj", "ThingsApi/"]
-COPY ["Application/Application.csproj", "Application/"]
-# The following ls commands will list the contents of /src, where you just copied your source code.
+WORKDIR .
+COPY ["ThingsApi/ThingsApi.csproj", "app/ThingsApi/"]
+COPY ["Application/Application.csproj", "app/Application/"]
+
 RUN ls -la
-# Now, specifically list the contents of the ThingsApi folder to ensure it was copied correctly.
 RUN ls -la ThingsApi
 RUN ls -la Application
-RUN dotnet restore "ThingsApi/ThingsApi.csproj"
-COPY ["ThingsApi/", "ThingsApi/"]
-COPY ["Application/", "Application/"]
-RUN dotnet build "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet restore "app/ThingsApi/ThingsApi.csproj"
+COPY ["ThingsApi/", "app/ThingsApi/"]
+COPY ["Application/", "app/Application/"]
+RUN dotnet build "app/ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
