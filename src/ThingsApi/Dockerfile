@@ -10,8 +10,9 @@ COPY ["ThingsApi/ThingsApi.csproj", "app/ThingsApi/"]
 COPY ["Application/Application.csproj", "app/Application/"]
 
 RUN ls -la
-RUN ls -la ThingsApi
-RUN ls -la Application
+RUN ls -la app
+RUN ls -la app/ThingsApi
+RUN ls -la app/Application
 
 RUN dotnet restore "app/ThingsApi/ThingsApi.csproj"
 COPY ["ThingsApi/", "app/ThingsApi/"]
