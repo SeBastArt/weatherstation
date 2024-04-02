@@ -61,7 +61,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ./ThingsApi/Dockerfile \
+            --file ./BackendApi/Dockerfile \
             --tag ${DOCKER_BACKEND_IMAGE}:${VERSION} \
             --tag ${DOCKER_BACKEND_IMAGE}:latest \
             --output type=image,push=true
@@ -71,7 +71,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ./ThingsApi/Dockerfile \
+            --file ./Weatherstation/Dockerfile \
             --tag ${DOCKER_FRONTEND_IMAGE}:${VERSION} \
             --tag ${DOCKER_FRONTEND_IMAGE}:latest \
             --output type=image,push=true
