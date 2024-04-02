@@ -9,7 +9,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/ThingsApi/ThingsApi.csproj", "ThingsApi/"]
 RUN dotnet restore "ThingsApi/ThingsApi.csproj"
-COPY ["src/", "."]
+COPY ["../", "."]
 WORKDIR /src
 RUN dotnet build "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
