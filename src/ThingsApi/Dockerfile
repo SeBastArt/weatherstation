@@ -10,8 +10,8 @@ WORKDIR /src
 COPY ["../ThingsApi/ThingsApi.csproj", "src/ThingsApi/"]
 RUN dotnet restore "src/ThingsApi/ThingsApi.csproj"
 COPY . .
-WORKDIR "/src/ThingsApi"
-RUN dotnet build "ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR /src
+RUN dotnet build "../ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
