@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: things-vs
+  namespace: {{ .Values.namespace.name }}
+spec:
+  hosts:
+  - {{ .Values.things.host }}
+  gateways:
+  - default/ingress-gateway
+  http:
+  - route:
+    - destination:
+        host: things
+        subset: {{ .Values.influxdb.version | default "v1" }}
+        port:
+          number: {{ .Values.things.port }}

@@ -9,6 +9,19 @@ frontend:
   replicas: 1
   port: 80
   version: "v1"
+
+things:
+  image: sebastart/weatherstation-thingsapi:latest
+  host: things.wondering-developer.de
+  replicas: 1
+  port: 80
+  version: "v1"
+
+backend:
+  image: sebastart/weatherstation-backendapi:latest
+  replicas: 1
+  port: 80
+  version: "v1"
   
 influxdb:
   version: "v1"

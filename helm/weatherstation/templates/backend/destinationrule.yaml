@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace.name }}
+spec:
+  host: backend
+  subsets:
+  - name: {{ .Values.backend.version | default "v1" }}
+    labels:
+      version: {{ .Values.backend.version | default "v1" }}
+  trafficPolicy:
+    tls:
+      mode: DISABLE

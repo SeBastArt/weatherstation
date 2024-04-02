@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: {{ .Values.backend.version | default "v1" }}
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image }}
+          ports:
+          - containerPort: {{ .Values.backend.port }}
+          envFrom:
+          - secretRef:
+              name: influxdb-secrets
+      imagePullSecrets:
+        - name: docker-container-registry

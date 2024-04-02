@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: things
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: things
+spec:
+  replicas: {{ .Values.things.replicas }}
+  selector:
+    matchLabels:
+      app: things
+  template:
+    metadata:
+      labels:
+        app: things
+        version: {{ .Values.things.version | default "v1" }}
+    spec:
+      containers:
+        - name: things
+          image: {{ .Values.things.image }}
+          ports:
+          - containerPort: {{ .Values.things.port }}
+      imagePullSecrets:
+        - name: docker-container-registry

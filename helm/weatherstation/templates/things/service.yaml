@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: things
+  namespace: {{ .Values.namespace.name }}
+spec:
+  selector:
+    app: things
+  ports:
+  - name: http
+    port: {{ .Values.things.port }}
+    targetPort: {{ .Values.things.port }}
