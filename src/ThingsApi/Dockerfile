@@ -7,20 +7,20 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR .
 COPY [".", "."]
-RUN ls -R
-RUN dotnet restore "ThingsApi/ThingsApi.csproj"
+RUN ls
+RUN dotnet restore "./ThingsApi/ThingsApi.csproj"
 
 WORKDIR .
 COPY [".", "."]
 RUN ls
-RUN dotnet build "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 WORKDIR .
 COPY [".", "."]
 RUN ls
-RUN dotnet publish "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
