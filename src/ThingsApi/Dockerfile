@@ -7,16 +7,14 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR .
-COPY [".", "."]
+COPY ["ThingsApi/", "ThingsApi/"]
+COPY ["Application/", "Application/"]
 RUN dotnet restore "ThingsApi/ThingsApi.csproj"
 
-WORKDIR .
-COPY [".", "."]
 RUN dotnet build "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-WORKDIR .
 RUN dotnet publish "ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
