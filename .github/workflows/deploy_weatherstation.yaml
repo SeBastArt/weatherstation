@@ -82,6 +82,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Weatherstation docker image
+        working-directory: src
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
@@ -122,6 +123,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push backend docker image
+        working-directory: src
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
