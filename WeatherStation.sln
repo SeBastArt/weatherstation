@@ -67,9 +67,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weatherstation", "src\Weath
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{74450C72-B4D8-437A-ACC8-6BA375D40FB3}"
 	ProjectSection(SolutionItems) = preProject
-		Dockerfile_BackendAPI = Dockerfile_BackendAPI
-		Dockerfile_ThingsAPI = Dockerfile_ThingsAPI
-		Dockerfile_Weatherstation = Dockerfile_Weatherstation
+		src\Dockerfile_BackendAPI = src\Dockerfile_BackendAPI
+		src\Dockerfile_ThingsAPI = src\Dockerfile_ThingsAPI
+		src\Dockerfile_Weatherstation = src\Dockerfile_Weatherstation
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E33B93C2-716C-43E9-B508-921B6CFDDBDA}"

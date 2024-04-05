@@ -9,8 +9,8 @@ COPY ["ThingsApi/ThingsApi.csproj", "ThingsApi/"]
 COPY ["Application/Application.csproj", "Application/"]
 RUN dotnet restore "ThingsApi/ThingsApi.csproj"
 
-COPY ["src/ThingsApi", "ThingsApi/"]
-COPY ["src/Application", "Application/"]
+COPY ["ThingsApi", "ThingsApi/"]
+COPY ["Application", "Application/"]
 RUN dotnet build "ThingsApi/ThingsApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
