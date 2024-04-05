@@ -41,17 +41,96 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push things docker image
-        working-directory: src
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ./ThingsApi/Dockerfile \
+            --file ./Dockerfile_ThingsAPI \
             --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
             --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
   
+  build_weatherstation:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE: sebastart/weatherstation
+      DOCKER_TARGET_PLATFORM: linux/arm64
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      image: ${{ env.DOCKER_IMAGE }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Prepare
+        id: prepare
+        run: |
+          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Log into registry docker hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Weatherstation docker image
+        run: |
+          docker buildx build . \
+            --platform $DOCKER_TARGET_PLATFORM \
+            --file ./Dockerfile_Weatherstation \
+            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ env.DOCKER_IMAGE }}:latest \
+            --output type=image,push=true
+  
+  build_backend:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE: sebastart/weatherstation-backendapi
+      DOCKER_TARGET_PLATFORM: linux/arm64
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      image: ${{ env.DOCKER_IMAGE }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Prepare
+        id: prepare
+        run: |
+          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Log into registry docker hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend docker image
+        run: |
+          docker buildx build . \
+            --platform $DOCKER_TARGET_PLATFORM \
+            --file ./Dockerfile_BackendAPI \
+            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ env.DOCKER_IMAGE }}:latest \
+            --output type=image,push=true
+          
   deploy:
-    needs: [build_things]
+    needs: [build_things, build_backend, build_weatherstation]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -83,7 +162,9 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
+            --set frontend.image=${{ needs.build_weatherstation.outputs.image }}:${{ needs.build_weatherstation.outputs.version }} \
             --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }} \
+            --set backend.image=${{ needs.build_backend.outputs.image }}:${{ needs.build_backend.outputs.version }}
       - name: Verify deployment
         run: |
           kubectl rollout status deployment/frontend -n weatherstation
