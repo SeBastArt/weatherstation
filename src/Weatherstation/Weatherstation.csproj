@@ -2,10 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <RuntimeFrameworkVersion>8.0.0</RuntimeFrameworkVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>aspnet-Weatherstation-0DF6B737-4EE5-4612-B470-4BD52049AA76</UserSecretsId>
+        <UserSecretsId>aspnet-Weatherstation-045F3D60-BD5B-4AB3-B64D-8A1914DE5C2C</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
