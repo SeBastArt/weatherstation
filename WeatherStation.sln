@@ -65,6 +65,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsApi", "src\ThingsApi\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weatherstation", "src\Weatherstation\Weatherstation.csproj", "{E16263C1-4076-431E-A6F9-8AD5093A4FCA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{74450C72-B4D8-437A-ACC8-6BA375D40FB3}"
+	ProjectSection(SolutionItems) = preProject
+		src\Dockerfile_BackendAPI = src\Dockerfile_BackendAPI
+		src\Dockerfile_ThingsAPI = src\Dockerfile_ThingsAPI
+		src\Dockerfile_Weatherstation = src\Dockerfile_Weatherstation
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E33B93C2-716C-43E9-B508-921B6CFDDBDA}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy_honeypal.yaml = .github\workflows\deploy_honeypal.yaml
+		.github\workflows\deploy_weatherstation.yaml = .github\workflows\deploy_weatherstation.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
