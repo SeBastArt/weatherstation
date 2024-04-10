@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Application.Interfaces;
+using Applikation.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OldThingsApi.Controllers;

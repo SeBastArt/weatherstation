@@ -7,6 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["OldThingsApi/OldThingsApi.csproj", "src/OldThingsApi/"]
+COPY ["Applikation/Applikation.csproj", "src/Applikation/"]
 RUN dotnet restore "src/OldThingsApi/OldThingsApi.csproj"
 COPY . .
 WORKDIR "/src/OldThingsApi"
