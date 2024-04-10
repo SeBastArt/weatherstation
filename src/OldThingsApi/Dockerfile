@@ -6,10 +6,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["OldThingsApi/OldThingsApi.csproj", "src/OldThingsApi/"]
+COPY ["src/OldThingsApi/OldThingsApi.csproj", "src/OldThingsApi/"]
 RUN dotnet restore "src/OldThingsApi/OldThingsApi.csproj"
 COPY . .
-WORKDIR "/src/OldThingsApi"
+WORKDIR "/src/src/OldThingsApi"
 RUN dotnet build "OldThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
