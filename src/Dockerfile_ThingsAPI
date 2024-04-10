@@ -10,8 +10,7 @@ COPY ["OldThingsApi/OldThingsApi.csproj", "src/OldThingsApi/"]
 COPY ["Applikation/Applikation.csproj", "src/Applikation/"]
 RUN dotnet restore "src/OldThingsApi/OldThingsApi.csproj"
 COPY . .
-WORKDIR "/src/OldThingsApi"
-RUN dotnet build "OldThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "src/OldThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
