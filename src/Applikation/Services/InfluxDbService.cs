@@ -9,12 +9,20 @@ using InfluxDB.Client.Writes;
 
 namespace Applikation.Services;
 
-public class InfluxDbService(IInfluxDbConfig config) : IInfluxDbService
+public class InfluxDbService : IInfluxDbService
 {
-    private readonly string _bucket = config.Bucket;
-    private readonly string _host = config.Host;
-    private readonly string _organization = config.Organization;
-    private readonly string _token = config.Token;
+    private readonly string _bucket;
+    private readonly string _host;
+    private readonly string _organization;
+    private readonly string _token;
+
+    public InfluxDbService(IInfluxDbConfig config)
+    {
+        _bucket = config.Bucket;
+        _host = config.Host;
+        _organization = config.Organization;
+        _token = config.Token;
+    }
 
     private string BuildTemperaturesOfTodayQuery(string eui)
     {
