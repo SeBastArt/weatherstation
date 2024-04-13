@@ -168,5 +168,6 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
+            --set backend.image=sebastart/weatherstation-backendapi:${{ needs.build_backend.outputs.version }} \
             --set frontend.image=${{ needs.build_weatherstation.outputs.image }}:${{ needs.build_weatherstation.outputs.version }} \
-            --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }} \
+            --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }}
