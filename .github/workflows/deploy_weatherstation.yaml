@@ -114,9 +114,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "image=${{ env.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT
+          echo "version=v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
+          echo "image=${{ env.DOCKER_IMAGE }}:v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
@@ -168,6 +167,6 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
-            --set backend.image=${{ needs.build_backend.outputs.image }}:${{ needs.build_backend.outputs.version }} \
+            --set backend.image=${{ needs.build_backend.outputs.image }} \
             --set frontend.image=${{ needs.build_weatherstation.outputs.image }}:${{ needs.build_weatherstation.outputs.version }} \
             --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }}
