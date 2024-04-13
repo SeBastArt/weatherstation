@@ -96,6 +96,7 @@ jobs:
   build_backend:
     runs-on: ubuntu-latest
     env:
+      DOCKER_IMAGE_NAME: weatherstation-backendapi
       DOCKER_IMAGE: sebastart/weatherstation-backendapi
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
@@ -115,7 +116,7 @@ jobs:
         id: prepare
         run: |
           echo "version=v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
-          echo "image=${{ env.DOCKER_IMAGE }} >> $GITHUB_OUTPUT
+          echo "image=sebastart/${{ env.DOCKER_IMAGE_NAME }} >> $GITHUB_OUTPUT
           
       - name: Echo Outputs
         run: |
