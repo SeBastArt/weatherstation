@@ -12,7 +12,7 @@ COPY ["ThingsApi", "src/ThingsApi/"]
 COPY ["Application", "src/Application/"]
 RUN dotnet restore "src/ThingsApi/ThingsApi.csproj"
 
-RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build -r linux-musl-arm64 --self-contained false -a arm64
+RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
