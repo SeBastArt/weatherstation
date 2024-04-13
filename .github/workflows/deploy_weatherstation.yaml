@@ -16,7 +16,7 @@ jobs:
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}
-      image: ${{ env.DOCKER_IMAGE }}
+      image: ${{ steps.prepare.outputs.image }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -24,16 +24,15 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Docker Setup Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          platforms: ${{ env.DOCKER_TARGET_PLATFORM }}
-          
+
       - name: Prepare
         id: prepare
         run: |
           VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "image=${{ env.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT 
           
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
@@ -59,7 +58,7 @@ jobs:
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}
-      image: ${{ env.DOCKER_IMAGE }}
+      image: ${{ steps.prepare.outputs.image }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -75,6 +74,7 @@ jobs:
         run: |
           VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "image=${{ env.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
@@ -168,6 +168,6 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
-            --set backend.image=sebastart/weatherstation-backendapi:${{ needs.build_backend.outputs.version }} \
+            --set backend.image=${{ needs.build_backend.outputs.image }}:${{ needs.build_backend.outputs.version }} \
             --set frontend.image=${{ needs.build_weatherstation.outputs.image }}:${{ needs.build_weatherstation.outputs.version }} \
             --set things.image=${{ needs.build_things.outputs.image }}:${{ needs.build_things.outputs.version }}
