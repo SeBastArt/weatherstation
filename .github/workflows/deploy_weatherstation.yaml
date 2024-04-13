@@ -45,7 +45,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ./Dockerfile_ThingsAPI \
+            --file ./Dockerfile_OldThingsAPI \
             --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
             --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true

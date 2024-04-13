@@ -68,6 +68,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{74450C
 		src\Dockerfile_BackendAPI = src\Dockerfile_BackendAPI
 		src\Dockerfile_ThingsAPI = src\Dockerfile_ThingsAPI
 		src\Dockerfile_Weatherstation = src\Dockerfile_Weatherstation
+		src\Dockerfile_OldThingsAPI = src\Dockerfile_OldThingsAPI
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E33B93C2-716C-43E9-B508-921B6CFDDBDA}"
