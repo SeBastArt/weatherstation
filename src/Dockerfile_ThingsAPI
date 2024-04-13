@@ -1,9 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime-deps:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG TARGETARCH
 ARG BUILDPLATFORM
 
@@ -12,7 +12,7 @@ COPY ["ThingsApi", "src/ThingsApi/"]
 COPY ["Application", "src/Application/"]
 RUN dotnet restore "src/ThingsApi/ThingsApi.csproj"
 
-RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c Release -o /app/build -a $TARGETARCH
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
