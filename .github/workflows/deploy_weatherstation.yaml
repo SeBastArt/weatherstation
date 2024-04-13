@@ -116,7 +116,7 @@ jobs:
         id: prepare
         run: |
           echo "version=v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
-          echo "image=sebastart/${{ env.DOCKER_IMAGE_NAME }} >> $GITHUB_OUTPUT
+          echo "image=sebastart/${{ env.DOCKER_IMAGE_NAME }}" >> $GITHUB_OUTPUT
           
       - name: Echo Outputs
         run: |
