@@ -115,8 +115,13 @@ jobs:
         id: prepare
         run: |
           echo "version=v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
-          echo "image=sebastart/weatherstation-backendapi" >> $GITHUB_OUTPUT
-
+          echo "image=${{ env.DOCKER_IMAGE }} >> $GITHUB_OUTPUT
+          
+      - name: Echo Outputs
+        run: |
+          echo "Version Output: ${{ steps.prepare.outputs.version }}"
+          echo "Image Output: ${{ steps.prepare.outputs.image }}"
+          
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
