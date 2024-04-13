@@ -100,7 +100,7 @@ jobs:
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}
-      image: ${{ env.DOCKER_IMAGE }}
+      image: ${{ steps.prepare.outputs.image }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -116,6 +116,7 @@ jobs:
         run: |
           VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "image=${{ env.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT
 
       - name: Log into registry docker hub
         if: github.event_name != 'pull_request'
