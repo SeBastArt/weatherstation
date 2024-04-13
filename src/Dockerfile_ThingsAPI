@@ -1,10 +1,12 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+ARG TARGETARCH
+ARG BUILDPLATFORM
+
 WORKDIR /src
 COPY ["ThingsApi", "src/ThingsApi/"]
 COPY ["Application", "src/Application/"]
