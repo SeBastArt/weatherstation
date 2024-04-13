@@ -49,9 +49,10 @@ jobs:
             --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
             --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
+
           
   deploy:
-    needs: [build_things, build_backend, build_weatherstation]
+    needs: [build_things]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
