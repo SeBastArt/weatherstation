@@ -16,7 +16,7 @@ RUN dotnet build "src/OldThingsApi/OldThingsApi.csproj" -c $BUILD_CONFIGURATION 
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "OldThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "src/OldThingsApi/OldThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
