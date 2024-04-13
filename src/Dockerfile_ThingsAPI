@@ -12,11 +12,10 @@ COPY ["ThingsApi", "src/ThingsApi/"]
 COPY ["Application", "src/Application/"]
 RUN dotnet restore "src/ThingsApi/ThingsApi.csproj"
 
-RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c Release -o /app/build -a $TARGETARCH
+RUN dotnet build "src/ThingsApi/ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/build -a $TARGETARCH
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ThingsApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ThingsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
 
 FROM base AS final
 WORKDIR /app
