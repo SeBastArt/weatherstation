@@ -77,7 +77,7 @@ public class InfluxDbService : IInfluxDbService
    
     public async Task<List<FluxTable>> QueryFluxAsync(string fluxQuery, string organization)
     {
-        using var client = InfluxDBClientFactory.Create(_host, _token);
+        using var client = new InfluxDBClient(_host, _token);
         var queryApi = client.GetQueryApi();
         return await queryApi.QueryAsync(fluxQuery, organization);
     }
@@ -124,7 +124,7 @@ public class InfluxDbService : IInfluxDbService
     
     public void Write(Action<WriteApi> action)
     {
-        using var client = InfluxDBClientFactory.Create(_host, _token);
+        using var client = new InfluxDBClient(_host, _token);
         using var write = client.GetWriteApi();
         action(write);
     }
