@@ -33,8 +33,6 @@ public class ThingsNetworkController : ControllerBase
     [HttpGet("GetTemperature", Name = "GetTemperature")]
     public async Task<ActionResult<double>> GetTemperature([FromQuery] string eui)
     {
-        // return random number between 20 and 45
-        return Ok(new Random().NextDouble() * 25 + 20);
         if (string.IsNullOrEmpty(eui)) return NoContent();
         var temperature = await _service.GetTemperature(eui);
         return Ok(temperature);

@@ -19,7 +19,7 @@ public class IndexModel : PageModel
         var backendApi = new Uri(_configuration["BackendApi:Url"] ?? throw new InvalidOperationException());
         var httpClient = new HttpClient();
         httpClient.BaseAddress = backendApi;
-        var response = httpClient.GetAsync("/api/ThingsNetwork/GetTemperature?eui=dfgdfg'").Result;
+        var response = httpClient.GetAsync("/api/ThingsNetwork/GetTemperature?eui=0025CA0A00000476").Result;
         var content = response.Content.ReadAsStringAsync().Result;
         ViewData["Temperature"] = content;
     }
