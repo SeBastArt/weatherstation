@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: things
-          image: {{ .Values.things.image }}
+          image: {{ .Values.things.image }}:{{ .Values.backend.imageVersion }}
           ports:
           - containerPort: {{ .Values.things.port }}
       imagePullSecrets:
