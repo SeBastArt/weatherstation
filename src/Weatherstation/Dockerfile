@@ -15,7 +15,7 @@ RUN dotnet restore "Weatherstation/Weatherstation.csproj"
 RUN dotnet build "Weatherstation/Weatherstation.csproj" -c Release -o /app/build -a $TARGETARCH
 
 FROM build AS publish
-RUN dotnet publish "Weatherstation/Weatherstation.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
+RUN dotnet publish "Weatherstation/Weatherstation.csproj" -c Release -o /app/publish /p:UseAppHost=true -a $TARGETARCH
 
 FROM --platform=$BUILDPLATFORM base AS final
 ARG TARGETARCH
