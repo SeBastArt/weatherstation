@@ -4,20 +4,22 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
-ARG BUILD_CONFIGURATION=Release
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG TARGETARCH
+ARG BUILDPLATFORM
 
-COPY [".", "BackendApi/"]
-COPY ["../Application/", "Application/"]
+COPY ["BackendApi/BackendApi.csproj", "ThingsApi/"]
+COPY ["Application/Application.csproj", "Application/"]
 RUN dotnet restore "BackendApi/BackendApi.csproj"
-
 RUN dotnet build "BackendApi/BackendApi.csproj" -c $BUILD_CONFIGURATION -o /app/build -a $TARGETARCH
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "BackendApi/BackendApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false  -a $TARGETARCH
 
-FROM base AS final
+FROM --platform=$BUILDPLATFORM base AS final
+ARG TARGETARCH
+ARG BUILDPLATFORM
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BackendApi.dll"]
