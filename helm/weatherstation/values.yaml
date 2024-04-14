@@ -9,6 +9,7 @@ frontend:
   host: weatherstation.wondering-developer.de
   replicas: 1
   port: 80
+  targetPort: 8080
   version: "v1"
 
 things:
@@ -17,6 +18,7 @@ things:
   host: things.wondering-developer.de
   replicas: 1
   port: 80
+  targetPort: 8080
   version: "v1"
 
 backend:
@@ -24,6 +26,7 @@ backend:
   imageVersion: "latest"
   replicas: 1
   port: 80
+  targetPort: 8080
   version: "v1"
   
 influxdb:

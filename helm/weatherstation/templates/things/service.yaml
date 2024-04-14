@@ -9,4 +9,4 @@ spec:
   ports:
   - name: http
     port: {{ .Values.things.port }}
-    targetPort: {{ .Values.things.port }}
+    targetPort: {{ .Values.things.targetPort }}

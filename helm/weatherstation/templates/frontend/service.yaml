@@ -9,4 +9,4 @@ spec:
   ports:
   - name: http
     port: {{ .Values.frontend.port }}
-    targetPort: {{ .Values.frontend.port }}
+    targetPort: {{ .Values.frontend.targetPort }}
