@@ -9,8 +9,8 @@ ARG TARGETARCH
 ARG BUILDPLATFORM
 
 WORKDIR /src
-COPY ["BackendApi/BackendApi.csproj", "BackendApi/"]
-COPY ["Application/Application.csproj", "Application/"]
+COPY ["BackendApi", "BackendApi/"]
+COPY ["Application", "Application/"]
 RUN ls -la
 RUN dotnet restore "BackendApi/BackendApi.csproj"
 RUN dotnet build "BackendApi/BackendApi.csproj" -c Release -o /app/build -a $TARGETARCH
