@@ -23,6 +23,6 @@ spec:
           - containerPort: {{ .Values.frontend.port }}
           env:
             - name: BackendApi__Url
-              value: "http://backend/
+              value: "http://backend/"
       imagePullSecrets:
         - name: docker-container-registry
