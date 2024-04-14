@@ -135,7 +135,7 @@ jobs:
             --output type=image,push=true
           
   deploy:
-    needs: [build_things, build_backend, build_weatherstation]
+    needs: [build_things, build_backend, build_frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
