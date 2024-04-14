@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Weatherstation.Pages;
+namespace Frontend.Pages;
 
 public class IndexModel : PageModel
 {
@@ -16,7 +16,6 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-        // httpClient to https://backend/api/Temperature
         var backendApi = new Uri(_configuration["BackendApi:Url"] ?? throw new InvalidOperationException());
         var httpClient = new HttpClient();
         httpClient.BaseAddress = backendApi;

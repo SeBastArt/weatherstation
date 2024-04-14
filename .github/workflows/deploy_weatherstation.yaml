@@ -49,7 +49,7 @@ jobs:
             --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
   
-  build_weatherstation:
+  build_frontend:
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE: sebastart/frontend
@@ -84,7 +84,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file Weatherstation/Dockerfile \
+            --file Frontend/Dockerfile \
             --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
             --tag ${{ env.DOCKER_IMAGE }}:latest \
             --output type=image,push=true
