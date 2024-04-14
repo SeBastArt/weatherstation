@@ -21,5 +21,8 @@ spec:
           image: {{ .Values.things.image }}:{{ .Values.backend.imageVersion }}
           ports:
           - containerPort: {{ .Values.things.port }}
+          envFrom:
+            - secretRef:
+                name: influxdb-secrets
       imagePullSecrets:
         - name: docker-container-registry
