@@ -52,7 +52,7 @@ jobs:
   build_weatherstation:
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE: sebastart/weatherstation
+      DOCKER_IMAGE: sebastart/frontend
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}
@@ -92,7 +92,7 @@ jobs:
   build_backend:
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE: sebastart/weatherstation-backendapi
+      DOCKER_IMAGE: sebastart/backendapi
       DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}

@@ -4,7 +4,7 @@ istio:
   revision: default
 
 frontend:
-  image: sebastart/weatherstation
+  image: sebastart/frontend
   imageVersion: "latest"
   host: weatherstation.wondering-developer.de
   replicas: 1
@@ -12,7 +12,7 @@ frontend:
   version: "v1"
 
 things:
-  image: sebastart/weatherstation-thingsapi
+  image: sebastart/thingsapi
   imageVersion: "latest"
   host: things.wondering-developer.de
   replicas: 1
@@ -20,7 +20,7 @@ things:
   version: "v1"
 
 backend:
-  image: sebastart/weatherstation-backendapi
+  image: sebastart/backendapi
   imageVersion: "latest"
   replicas: 1
   port: 80
