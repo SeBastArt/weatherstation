@@ -1,22 +1,25 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+USER $APP_UID
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-ARG BUILD_CONFIGURATION=Release
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG TARGETARCH
+ARG BUILDPLATFORM
+
 WORKDIR /src
-COPY ["src/Weatherstation/Weatherstation.csproj", "src/Weatherstation/"]
-RUN dotnet restore "src/Weatherstation/Weatherstation.csproj"
-COPY . .
-WORKDIR "/src/src/Weatherstation"
-RUN dotnet build "Weatherstation.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY ["Weatherstation", "Weatherstation/"]
+
+RUN dotnet restore "Weatherstation/Weatherstation.csproj"
+RUN dotnet build "Weatherstation/Weatherstation.csproj" -c Release -o /app/build -a $TARGETARCH
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Weatherstation.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Weatherstation/Weatherstation.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
 
-FROM base AS final
+FROM --platform=$BUILDPLATFORM base AS final
+ARG TARGETARCH
+ARG BUILDPLATFORM
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Weatherstation.dll"]

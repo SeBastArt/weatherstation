@@ -1,21 +1,25 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+USER $APP_UID
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG TARGETARCH
+ARG BUILDPLATFORM
+
 WORKDIR /src
-COPY ["ThingsApi/ThingsApi.csproj", "ThingsApi/"]
-COPY ["Application/Application.csproj", "Application/"]
+COPY ["ThingsApi", "ThingsApi/"]
+COPY ["Application", "Application/"]
 RUN dotnet restore "ThingsApi/ThingsApi.csproj"
-COPY . .
-WORKDIR "/src/ThingsApi"
-RUN dotnet build "ThingsApi.csproj" -c Release -o /app/build
+RUN dotnet build "ThingsApi/ThingsApi.csproj" -c Release -o /app/build -a $TARGETARCH
 
 FROM build AS publish
-RUN dotnet publish "ThingsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ThingsApi/ThingsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
 
-FROM base AS final
+FROM --platform=$BUILDPLATFORM base AS final
+ARG TARGETARCH
+ARG BUILDPLATFORM
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "InputApi.dll"]
+ENTRYPOINT ["dotnet", "ThingsApi.dll"]
