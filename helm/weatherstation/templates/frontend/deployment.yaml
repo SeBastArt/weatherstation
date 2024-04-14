@@ -21,5 +21,8 @@ spec:
           image: {{ .Values.frontend.image }}:{{ .Values.backend.imageVersion }}
           ports:
           - containerPort: {{ .Values.frontend.port }}
+          env:
+            - name: BackendApi__Url
+              value: "http://backend:"{{ .Values.backend.port }}"/"
       imagePullSecrets:
         - name: docker-container-registry
