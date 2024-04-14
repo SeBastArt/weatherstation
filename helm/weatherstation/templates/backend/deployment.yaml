@@ -22,7 +22,7 @@ spec:
           ports:
           - containerPort: {{ .Values.backend.port }}
           envFrom:
-          - secretRef:
-              name: influxdb-secrets
+            - secretRef:
+                name: influxdb-secrets
       imagePullSecrets:
         - name: docker-container-registry
