@@ -30,7 +30,7 @@ backend:
   version: "v1"
   
 influxdb:
-  host: http://influxdb/
+  host: http://influxdb
   version: "v1"
   image: influxdb:2.7.1
   port: 8086
