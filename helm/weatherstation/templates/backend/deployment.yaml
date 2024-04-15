@@ -21,6 +21,13 @@ spec:
           image: {{ .Values.backend.image }}:{{ .Values.backend.imageVersion }}
           ports:
           - containerPort: {{ .Values.backend.port }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
           envFrom:
             - secretRef:
                 name: backend-secrets

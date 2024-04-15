@@ -21,6 +21,13 @@ spec:
           image: {{ .Values.things.image }}:{{ .Values.backend.imageVersion }}
           ports:
           - containerPort: {{ .Values.things.port }}
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
           envFrom:
             - secretRef:
                 name: things-secrets
