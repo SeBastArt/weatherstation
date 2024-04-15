@@ -30,11 +30,12 @@ backend:
   version: "v1"
   
 influxdb:
+  host: http://influxdb/
   version: "v1"
   image: influxdb:2.7.1
   port: 8086
   pvc:
-    size: 10Gi
+    size: 5Gi
   secrets:
     INFLUXDB_INIT_MODE: setup
     INFLUXDB_INIT_USERNAME: admin

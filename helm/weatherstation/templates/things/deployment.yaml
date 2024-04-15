@@ -23,6 +23,6 @@ spec:
           - containerPort: {{ .Values.things.port }}
           envFrom:
             - secretRef:
-                name: influxdb-secrets
+                name: things-secrets
       imagePullSecrets:
         - name: docker-container-registry
