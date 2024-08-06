@@ -24,6 +24,7 @@ things:
 backend:
   image: sebastart/backendapi
   imageVersion: "latest"
+  host: weatherstation.wondering-developer.de
   replicas: 1
   port: 80
   targetPort: 8080
