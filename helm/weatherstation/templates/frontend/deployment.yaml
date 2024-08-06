@@ -20,7 +20,7 @@ spec:
         - name: frontend
           image: {{ .Values.frontend.image }}:{{ .Values.backend.imageVersion }}
           ports:
-          - containerPort: {{ .Values.frontend.port }}
+          - containerPort: {{ .Values.frontend.targetPort }}
           env:
             - name: BackendApi__Url
               value: http://backend.{{ .Values.namespace.name }}.svc.cluster.local

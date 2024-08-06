@@ -20,7 +20,7 @@ spec:
         - name: backend
           image: {{ .Values.backend.image }}:{{ .Values.backend.imageVersion }}
           ports:
-          - containerPort: {{ .Values.backend.port }}
+          - containerPort: {{ .Values.backend.targetPort }}
           resources:
             requests:
               memory: "128Mi"

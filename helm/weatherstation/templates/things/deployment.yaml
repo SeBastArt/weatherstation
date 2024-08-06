@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
         - name: things
-          image: {{ .Values.things.image }}:{{ .Values.backend.imageVersion }}
+          image: {{ .Values.things.image }}:{{ .Values.things.imageVersion }}
           ports:
-          - containerPort: {{ .Values.things.port }}
+          - containerPort: {{ .Values.things.targetPort }}
           resources:
             requests:
               memory: "64Mi"
