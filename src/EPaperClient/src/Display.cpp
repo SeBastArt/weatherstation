@@ -1,12 +1,12 @@
 ﻿// Display.cpp
 
 #include "Display.h" // Inkludieren Sie die entsprechende Header-Datei
+#include <cmath>
+#include <cstdlib>
 #include <dummy.h>
 #include "DEV_Config.h"
 #include "EPD.h"
 #include "GUI_Paint.h"
-#include <stdlib.h>
-#include <math.h>
 #include "time.h"
 
 using namespace e_ink_display_project; // Namespace verwenden
@@ -60,7 +60,7 @@ display::~display()
     EPD_7IN5_V2_Sleep();
 }
 
-void display::write_room(const char* name, const double temperature, const UWORD x_start, const UWORD y_start) const
+void display::write_room(const char* name, const double temperature, const UWORD x_start, const UWORD y_start)
 {
     const uint16_t temp_start_x = x_start + 15;
     const uint16_t temp_start_y = y_start + 70;
@@ -68,7 +68,7 @@ void display::write_room(const char* name, const double temperature, const UWORD
     Paint_DrawString_EN(x_start + 20, y_start + 15, name, &Font24, WHITE, BLACK);
 }
 
-auto display::write_temperature(const double temperature, const UWORD x_start, const UWORD y_start) const -> void
+auto display::write_temperature(const double temperature, const UWORD x_start, const UWORD y_start) -> void
 {
     constexpr int decimal_places = 1;
     constexpr int distance_grad_celcius = 170;
@@ -133,7 +133,7 @@ auto display::write_time(const UWORD x_start, const UWORD y_start) const -> void
     Paint_DrawString_EN(x_start + 90, y_start, formattedTime, &Font48, WHITE, BLACK);
 }
 
-auto display::write_lines() const -> void
+auto display::draw_lines() const -> void
 {
     Paint_DrawLine(2 * (width_ / 3), height_, 2 * (width_ / 3), height_ / 3, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);
     Paint_DrawLine(width_ / 3, height_, width_ / 3, height_ / 3, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);
