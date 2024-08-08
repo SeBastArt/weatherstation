@@ -5,6 +5,6 @@ namespace Application.Interfaces;
 
 public interface IPayloadProcessor
 {
-    bool CanProcess(string deviceId);
+    bool CanProcess(string? deviceId);
     void ProcessPayload(JsonElement payload, WeatherDataPoint weatherDataPoint);
 }

@@ -6,7 +6,7 @@ namespace Application.Services.PayloadProcessors;
 
 public class LiardPayloadProcessor : IPayloadProcessor
 {
-    public bool CanProcess(string deviceId) => deviceId.Contains("liard");
+    public bool CanProcess(string? deviceId) => deviceId.Contains("liard");
 
     public void ProcessPayload(JsonElement payload, WeatherDataPoint weatherDataPoint)
     {

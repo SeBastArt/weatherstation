@@ -12,7 +12,7 @@ public class PayloadProcessorFactory
         new LiardPayloadProcessor()
     ];
 
-    public IPayloadProcessor GetProcessor(string deviceId)
+    public IPayloadProcessor GetProcessor(string? deviceId)
     {
         return _processors.FirstOrDefault(p => p.CanProcess(deviceId)) ?? throw new InvalidOperationException("No processor found for the device.");
     }

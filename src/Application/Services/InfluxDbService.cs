@@ -26,6 +26,17 @@ public class InfluxDbService(IInfluxDbConfig config) : IInfluxDbService
                "|> aggregateWindow(every: 1h, fn: mean, createEmpty: false) " +
                "|> yield(name: \"interpolated\")";
     }
+    
+    private string BuildHumidityOfTodayQuery(string eui)
+    {
+        return $"from(bucket: \"{_bucket}\")" +
+               "|> range(start: 0)" +
+               "|> filter(fn: (r) => r[\"_measurement\"] == \"weather\")" +
+               "|> filter(fn: (r) => r[\"_field\"] == \"Humidity\")" +
+               $"|> filter(fn: (r) => r[\"dev_eui\"] == \"{eui}\")" +
+               "|> aggregateWindow(every: 1h, fn: mean, createEmpty: false) " +
+               "|> yield(name: \"interpolated\")";
+    }
 
     private string BuildHumidityQuery(string eui)
     {
@@ -63,10 +74,16 @@ public class InfluxDbService(IInfluxDbConfig config) : IInfluxDbService
     public async Task<List<double>> GetTemperaturesOfToday(string eui)
     {
         var fluxQuery = BuildTemperaturesOfTodayQuery(eui);
-        return await ExecuteTemperaturesOfTodayQuery(fluxQuery);
+        return await ExecuteListQuery(fluxQuery);
     }
 
-   
+    public Task<List<double>> GetHumidityOfToday(string eui)
+    {
+        var fluxQuery = BuildHumidityOfTodayQuery(eui);
+        return ExecuteListQuery(fluxQuery);
+    }
+
+
     public async Task<List<FluxTable>> QueryFluxAsync(string fluxQuery, string organization)
     {
         using var client = new InfluxDBClient(_host, _token);
@@ -91,16 +108,16 @@ public class InfluxDbService(IInfluxDbConfig config) : IInfluxDbService
         var fluxQuery = BuildTemperatureQuery(eui);
         return await ExecuteQuery(fluxQuery);
     }
-
-    private async Task<List<double>> ExecuteTemperaturesOfTodayQuery(string fluxQuery)
+    
+    private async Task<List<double>> ExecuteListQuery(string fluxQuery)
     {
         var tables = await QueryFluxAsync(fluxQuery, _organization);
         var interpolatedDataPoints = new List<double>();
         foreach (var fluxRow in tables.First().Records)
         {
-            var temperature = float.Parse(fluxRow.GetValueByKey("_value").ToString() ?? string.Empty,
+            var value = float.Parse(fluxRow.GetValueByKey("_value").ToString() ?? string.Empty,
                 CultureInfo.CurrentCulture);
-            var roundedValue = Math.Round(temperature, 1);
+            var roundedValue = Math.Round(value, 1);
             interpolatedDataPoints.Add(roundedValue);
         }
 

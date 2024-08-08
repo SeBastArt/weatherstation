@@ -13,5 +13,6 @@ public interface IInfluxDbService
     Task<double> GetBattery(string eui);
     Task<double> GetTemperature(string eui);
     Task<List<double>> GetTemperaturesOfToday(string eui);
+    Task<List<double>> GetHumidityOfToday(string eui);
     void PostDataPoint(JsonElement data);
 }

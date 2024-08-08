@@ -45,4 +45,12 @@ public class ThingsNetworkController : ControllerBase
         var temperatures = await _service.GetTemperaturesOfToday(eui);
         return Ok(temperatures);
     }
+    
+    [HttpGet("GetHumidityOfToday", Name = "GetHumidityOfToday")]
+    public async Task<ActionResult<List<double>>> GetHumidityOfToday([FromQuery] string eui)
+    {
+        if (string.IsNullOrEmpty(eui)) return NoContent();
+        var humidity = await _service.GetHumidityOfToday(eui);
+        return Ok(humidity);
+    }
 }

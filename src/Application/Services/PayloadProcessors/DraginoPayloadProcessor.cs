@@ -6,7 +6,7 @@ namespace Application.Services.PayloadProcessors;
 
 public class DraginoPayloadProcessor: IPayloadProcessor
 {
-    public bool CanProcess(string deviceId) => deviceId.Contains("dragino");
+    public bool CanProcess(string? deviceId) => deviceId.Contains("dragino");
 
     public void ProcessPayload(JsonElement payload, WeatherDataPoint weatherDataPoint)
     {

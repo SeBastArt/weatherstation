@@ -6,7 +6,7 @@ namespace Application.Services.PayloadProcessors;
 
 public class DecentlabPayloadProcessor: IPayloadProcessor
 {
-    public bool CanProcess(string deviceId) => deviceId.Contains("decentlab");
+    public bool CanProcess(string? deviceId) => deviceId.Contains("decentlab");
 
     public void ProcessPayload(JsonElement payload, WeatherDataPoint weatherDataPoint)
     {
