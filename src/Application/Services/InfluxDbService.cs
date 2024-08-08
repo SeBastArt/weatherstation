@@ -30,7 +30,7 @@ public class InfluxDbService(IInfluxDbConfig config) : IInfluxDbService
     private string BuildHumidityOfTodayQuery(string eui)
     {
         return $"from(bucket: \"{_bucket}\")" +
-               "|> range(start: 0)" +
+               $"|> range(start: -23h) " +
                "|> filter(fn: (r) => r[\"_measurement\"] == \"weather\")" +
                "|> filter(fn: (r) => r[\"_field\"] == \"Humidity\")" +
                $"|> filter(fn: (r) => r[\"dev_eui\"] == \"{eui}\")" +
