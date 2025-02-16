@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
         - name: backend
-          image: {{ .Values.backend.image }}:{{ .Values.backend.imageVersion }}
+          image: "{{ .Values.backend.image }}:{{ .Values.backend.imageVersion }}"
           ports:
-          - containerPort: {{ .Values.backend.targetPort }}
+            - containerPort: {{ .Values.backend.targetPort }}
           resources:
             requests:
               memory: "128Mi"
