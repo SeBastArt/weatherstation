@@ -9,164 +9,89 @@ on:
         default: '1.0'
 
 jobs:
-  build_things:
+  prepare:
     runs-on: ubuntu-latest
-    env:
-      DOCKER_IMAGE: sebastart/thingsapi
-      DOCKER_TARGET_PLATFORM: linux/arm64
     outputs:
       version: ${{ steps.prepare.outputs.version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare
+      - name: Prepare Version
         id: prepare
         run: |
+          # Erstelle eine Version z. B. v1.0.<run_number>
           VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
-      - name: Log into registry docker hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push things docker image
-        working-directory: src
-        run: |
-          docker buildx build . \
-            --platform $DOCKER_TARGET_PLATFORM \
-            --file ThingsApi/Dockerfile \
-            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
-            --tag ${{ env.DOCKER_IMAGE }}:latest \
-            --output type=image,push=true
-  
-  build_frontend:
+  build:
+    needs: prepare
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          - name: things
+            image: sebastart/thingsapi
+            dockerfile: ThingsApi/Dockerfile
+          - name: frontend
+            image: sebastart/frontend
+            dockerfile: Frontend/Dockerfile
+          - name: backend
+            image: sebastart/backendapi
+            dockerfile: BackendApi/Dockerfile
     env:
-      DOCKER_IMAGE: sebastart/frontend
       DOCKER_TARGET_PLATFORM: linux/arm64
-    outputs:
-      version: ${{ steps.prepare.outputs.version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Prepare
-        id: prepare
-        run: |
-          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Log into registry docker hub
+      - name: Log into Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Weatherstation docker image
-        working-directory: src
+      - name: Build and push ${{ matrix.component.name }} image
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file Frontend/Dockerfile \
-            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
-            --tag ${{ env.DOCKER_IMAGE }}:latest \
+            --file ${{ matrix.component.dockerfile }} \
+            --tag ${{ matrix.component.image }}:${{ needs.prepare.outputs.version }} \
+            --tag ${{ matrix.component.image }}:latest \
             --output type=image,push=true
-  
-  build_backend:
-    runs-on: ubuntu-latest
-    env:
-      DOCKER_IMAGE: sebastart/backendapi
-      DOCKER_TARGET_PLATFORM: linux/arm64
-    outputs:
-      version: ${{ steps.prepare.outputs.version }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare
-        id: prepare
-        run: |
-          VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
-      - name: Echo Outputs
-        run: |
-          echo "Version Output: ${{ steps.prepare.outputs.version }}"
-          echo "Image Output: ${{ steps.prepare.outputs.image }}"
-          
-      - name: Log into registry docker hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push backend docker image
-        working-directory: src
-        run: |
-          docker buildx build . \
-            --platform $DOCKER_TARGET_PLATFORM \
-            --file BackendApi/Dockerfile \
-            --tag ${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.version }} \
-            --tag ${{ env.DOCKER_IMAGE }}:latest \
-            --output type=image,push=true
-          
   deploy:
-    needs: [build_things, build_backend, build_frontend]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
-
       - name: Install Helm
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-
       - name: Configure Kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          
+          chmod 600 $HOME/.kube/config
       - name: Deploy with Helm
         env:
           INFLUXDB_INIT_USERNAME: ${{ secrets.INFLUXDB_INIT_USERNAME }}
           INFLUXDB_INIT_PASSWORD: ${{ secrets.INFLUXDB_INIT_PASSWORD }}
           INFLUXDB_INIT_ADMIN_TOKEN: ${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}
         run: |
-          chmod 600 /home/runner/.kube/config
           helm upgrade --install weatherstation ./helm/weatherstation \
             --create-namespace \
+            --namespace weatherstation \
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
-            --set backend.imageVersion=${{ needs.build_backend.outputs.version }} \
-            --set frontend.imageVersion=${{ needs.build_weatherstation.outputs.version }} \
-            --set things.imageVersion=${{ needs.build_things.outputs.version }}
+            --set backend.imageVersion=${{ needs.prepare.outputs.version }} \
+            --set frontend.imageVersion=${{ needs.prepare.outputs.version }} \
+            --set things.imageVersion=${{ needs.prepare.outputs.version }}
