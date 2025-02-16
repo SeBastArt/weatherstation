@@ -54,6 +54,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push ${{ matrix.component.name }} image
+        working-directory: src
         run: |
           docker buildx build . \
             --platform $DOCKER_TARGET_PLATFORM \
