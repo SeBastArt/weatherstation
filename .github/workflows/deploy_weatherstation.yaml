@@ -64,7 +64,7 @@ jobs:
             --output type=image,push=true
 
   deploy:
-    needs: [build]
+    needs: [build, prepare]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
