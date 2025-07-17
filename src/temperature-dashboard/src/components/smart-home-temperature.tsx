@@ -4,157 +4,39 @@ import React, { useEffect, useState } from "react"
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart"
-import { Home, User, Bed, TreePine, Sun, Cloud, CloudRain, Wind, Thermometer, Activity } from "lucide-react"
+import { Home, User, Bed, TreePine, Sun, Cloud, CloudRain, Wind, Thermometer, ShowerHead, Activity } from "lucide-react"
+
+interface RoomData {
+  hour: number;
+  temp: number;
+}
+
+interface RoomInfo {
+  name: string;
+  eui: string;
+  data: RoomData[];
+  current: number;
+  min: number;
+  max: number;
+  icon: any;
+  color: string;
+  lightColor: string;
+  textColor: string;
+  chartColor: string;
+  borderColor: string;
+}
 
 export default function SmartHomeTemperature() {
-  // State für aktuelle Temperatur vom Balkon
-  const [currentBalkonTemp, setCurrentBalkonTemp] = useState<number | null>(null)
+  // State für alle Räume
+  const [roomsData, setRoomsData] = useState<{[key: string]: RoomData[]}>({})
+  const [currentTemps, setCurrentTemps] = useState<{[key: string]: number}>({})
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchTemperature = async () => {
-      try {
-        const response = await fetch("https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetTemperature?eui=0004A30B001FB02B")
-        if (response.ok) {
-          const temperature = await response.json()
-          setCurrentBalkonTemp(temperature)
-        } else {
-          console.error('Failed to fetch temperature')
-        }
-      } catch (error) {
-        console.error('Error fetching temperature:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTemperature()
-  }, [])
-
-  // Sample temperature data for each room throughout the day
-  const balkonData = [
-    { hour: 0, temp: 8 },
-    { hour: 1, temp: 7 },
-    { hour: 2, temp: 6 },
-    { hour: 3, temp: 5 },
-    { hour: 4, temp: 4 },
-    { hour: 5, temp: 5 },
-    { hour: 6, temp: 8 },
-    { hour: 7, temp: 12 },
-    { hour: 8, temp: 16 },
-    { hour: 9, temp: 20 },
-    { hour: 10, temp: 23 },
-    { hour: 11, temp: 25 },
-    { hour: 12, temp: 27 },
-    { hour: 13, temp: 28 },
-    { hour: 14, temp: 29 },
-    { hour: 15, temp: 28 },
-    { hour: 16, temp: 26 },
-    { hour: 17, temp: 24 },
-    { hour: 18, temp: 21 },
-    { hour: 19, temp: 18 },
-    { hour: 20, temp: 15 },
-    { hour: 21, temp: 13 },
-    { hour: 22, temp: 11 },
-    { hour: 23, temp: 9 },
-  ]
-
-  const wohnzimmerData = [
-    { hour: 0, temp: 20 },
-    { hour: 1, temp: 19 },
-    { hour: 2, temp: 19 },
-    { hour: 3, temp: 18 },
-    { hour: 4, temp: 18 },
-    { hour: 5, temp: 18 },
-    { hour: 6, temp: 19 },
-    { hour: 7, temp: 21 },
-    { hour: 8, temp: 22 },
-    { hour: 9, temp: 23 },
-    { hour: 10, temp: 24 },
-    { hour: 11, temp: 24 },
-    { hour: 12, temp: 25 },
-    { hour: 13, temp: 25 },
-    { hour: 14, temp: 24 },
-    { hour: 15, temp: 24 },
-    { hour: 16, temp: 23 },
-    { hour: 17, temp: 23 },
-    { hour: 18, temp: 22 },
-    { hour: 19, temp: 22 },
-    { hour: 20, temp: 21 },
-    { hour: 21, temp: 21 },
-    { hour: 22, temp: 20 },
-    { hour: 23, temp: 20 },
-  ]
-
-  const simonData = [
-    { hour: 0, temp: 19 },
-    { hour: 1, temp: 18 },
-    { hour: 2, temp: 18 },
-    { hour: 3, temp: 17 },
-    { hour: 4, temp: 17 },
-    { hour: 5, temp: 17 },
-    { hour: 6, temp: 18 },
-    { hour: 7, temp: 19 },
-    { hour: 8, temp: 20 },
-    { hour: 9, temp: 21 },
-    { hour: 10, temp: 22 },
-    { hour: 11, temp: 23 },
-    { hour: 12, temp: 24 },
-    { hour: 13, temp: 24 },
-    { hour: 14, temp: 23 },
-    { hour: 15, temp: 23 },
-    { hour: 16, temp: 22 },
-    { hour: 17, temp: 22 },
-    { hour: 18, temp: 21 },
-    { hour: 19, temp: 21 },
-    { hour: 20, temp: 20 },
-    { hour: 21, temp: 20 },
-    { hour: 22, temp: 19 },
-    { hour: 23, temp: 19 },
-  ]
-
-  const schlafzimmerData = [
-    { hour: 0, temp: 18 },
-    { hour: 1, temp: 17 },
-    { hour: 2, temp: 17 },
-    { hour: 3, temp: 16 },
-    { hour: 4, temp: 16 },
-    { hour: 5, temp: 16 },
-    { hour: 6, temp: 17 },
-    { hour: 7, temp: 18 },
-    { hour: 8, temp: 19 },
-    { hour: 9, temp: 20 },
-    { hour: 10, temp: 21 },
-    { hour: 11, temp: 21 },
-    { hour: 12, temp: 22 },
-    { hour: 13, temp: 22 },
-    { hour: 14, temp: 21 },
-    { hour: 15, temp: 21 },
-    { hour: 16, temp: 20 },
-    { hour: 17, temp: 20 },
-    { hour: 18, temp: 19 },
-    { hour: 19, temp: 19 },
-    { hour: 20, temp: 18 },
-    { hour: 21, temp: 18 },
-    { hour: 22, temp: 17 },
-    { hour: 23, temp: 17 },
-  ]
-
-  const forecastData = [
-    { day: "Heute", temp: 24, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
-    { day: "Morgen", temp: 22, condition: "Bewölkt", icon: Cloud, color: "text-slate-500" },
-    { day: "Mi", temp: 19, condition: "Regen", icon: CloudRain, color: "text-blue-500" },
-    { day: "Do", temp: 21, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
-    { day: "Fr", temp: 25, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
-  ]
-
-  const rooms = [
+  // Room configuration with EUIs
+  const roomConfigs = [
     {
       name: "Balkon",
-      data: balkonData,
-      current: currentBalkonTemp !== null ? Number(currentBalkonTemp.toFixed(1)) : 24,
-      min: Math.min(...balkonData.map((d) => d.temp)),
-      max: Math.max(...balkonData.map((d) => d.temp)),
+      eui: "0004A30B001FB02B",
       icon: TreePine,
       color: "bg-orange-500",
       lightColor: "bg-orange-50",
@@ -164,10 +46,7 @@ export default function SmartHomeTemperature() {
     },
     {
       name: "Wohnzimmer",
-      data: wohnzimmerData,
-      current: 23,
-      min: Math.min(...wohnzimmerData.map((d) => d.temp)),
-      max: Math.max(...wohnzimmerData.map((d) => d.temp)),
+      eui: "0004A30B001FDC0B",
       icon: Home,
       color: "bg-emerald-500",
       lightColor: "bg-emerald-50",
@@ -177,10 +56,7 @@ export default function SmartHomeTemperature() {
     },
     {
       name: "Simon",
-      data: simonData,
-      current: 22,
-      min: Math.min(...simonData.map((d) => d.temp)),
-      max: Math.max(...simonData.map((d) => d.temp)),
+      eui: "A84041000181854C",
       icon: User,
       color: "bg-violet-500",
       lightColor: "bg-violet-50",
@@ -190,10 +66,7 @@ export default function SmartHomeTemperature() {
     },
     {
       name: "Schlafzimmer",
-      data: schlafzimmerData,
-      current: 19,
-      min: Math.min(...schlafzimmerData.map((d) => d.temp)),
-      max: Math.max(...schlafzimmerData.map((d) => d.temp)),
+      eui: "0025CA0A00000476",
       icon: Bed,
       color: "bg-blue-500",
       lightColor: "bg-blue-50",
@@ -201,7 +74,163 @@ export default function SmartHomeTemperature() {
       chartColor: "#3b82f6",
       borderColor: "border-blue-200",
     },
+    {
+      name: "Badezimmer",
+      eui: "0004A30B002240C2",
+      icon: ShowerHead, // Du kannst ein passenderes Icon wählen
+      color: "bg-cyan-500",
+      lightColor: "bg-cyan-50",
+      textColor: "text-cyan-600",
+      chartColor: "#06b6d4",
+      borderColor: "border-cyan-200",
+    },
   ]
+
+  // Generic function to fetch current temperature
+  const fetchCurrentTemperature = async (eui: string): Promise<number | null> => {
+    try {
+      const response = await fetch(`https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetTemperature?eui=${eui}`)
+      if (response.ok) {
+        const temperature = await response.json()
+        return temperature
+      } else {
+        console.error(`Failed to fetch current temperature for ${eui}`)
+        return null
+      }
+    } catch (error) {
+      console.error(`Error fetching current temperature for ${eui}:`, error)
+      return null
+    }
+  }
+
+  // Generic function to fetch temperatures of today
+  const fetchTemperaturesOfToday = async (eui: string): Promise<RoomData[]> => {
+    try {
+      const response = await fetch(`https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetTemperaturesOfToday?eui=${eui}`)
+      if (response.ok) {
+        const temps = await response.json()
+        // Map API data to chart format: hour = index, temp = value
+        return temps.map((temp: number, idx: number) => ({ hour: idx, temp }))
+      } else {
+        console.error(`Failed to fetch temperatures of today for ${eui}`)
+        return []
+      }
+    } catch (error) {
+      console.error(`Error fetching temperatures of today for ${eui}:`, error)
+      return []
+    }
+  }
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const tempPromises = roomConfigs.map(room => fetchCurrentTemperature(room.eui))
+      const dataPromises = roomConfigs.map(room => fetchTemperaturesOfToday(room.eui))
+
+      try {
+        const [currentTempsResults, roomsDataResults] = await Promise.all([
+          Promise.all(tempPromises),
+          Promise.all(dataPromises)
+        ])
+
+        // Update current temperatures
+        const newCurrentTemps: {[key: string]: number} = {}
+        roomConfigs.forEach((room, index) => {
+          const temp = currentTempsResults[index]
+          if (temp !== null) {
+            newCurrentTemps[room.name] = temp
+          }
+        })
+        setCurrentTemps(newCurrentTemps)
+
+        // Update room data
+        const newRoomsData: {[key: string]: RoomData[]} = {}
+        roomConfigs.forEach((room, index) => {
+          const data = roomsDataResults[index]
+          if (data.length > 0) {
+            newRoomsData[room.name] = data
+          }
+        })
+        setRoomsData(newRoomsData)
+
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAllData()
+  }, [])
+
+  // Default data for fallback
+  const getDefaultData = (roomName: string): RoomData[] => {
+    const defaultData = {
+      "Balkon": [
+        { hour: 0, temp: 8 }, { hour: 1, temp: 7 }, { hour: 2, temp: 6 }, { hour: 3, temp: 5 },
+        { hour: 4, temp: 4 }, { hour: 5, temp: 5 }, { hour: 6, temp: 8 }, { hour: 7, temp: 12 },
+        { hour: 8, temp: 16 }, { hour: 9, temp: 20 }, { hour: 10, temp: 23 }, { hour: 11, temp: 25 },
+        { hour: 12, temp: 27 }, { hour: 13, temp: 28 }, { hour: 14, temp: 29 }, { hour: 15, temp: 28 },
+        { hour: 16, temp: 26 }, { hour: 17, temp: 24 }, { hour: 18, temp: 21 }, { hour: 19, temp: 18 },
+        { hour: 20, temp: 15 }, { hour: 21, temp: 13 }, { hour: 22, temp: 11 }, { hour: 23, temp: 9 },
+      ],
+      "Wohnzimmer": [
+        { hour: 0, temp: 20 }, { hour: 1, temp: 19 }, { hour: 2, temp: 19 }, { hour: 3, temp: 18 },
+        { hour: 4, temp: 18 }, { hour: 5, temp: 18 }, { hour: 6, temp: 19 }, { hour: 7, temp: 21 },
+        { hour: 8, temp: 22 }, { hour: 9, temp: 23 }, { hour: 10, temp: 24 }, { hour: 11, temp: 24 },
+        { hour: 12, temp: 25 }, { hour: 13, temp: 25 }, { hour: 14, temp: 24 }, { hour: 15, temp: 24 },
+        { hour: 16, temp: 23 }, { hour: 17, temp: 23 }, { hour: 18, temp: 22 }, { hour: 19, temp: 22 },
+        { hour: 20, temp: 21 }, { hour: 21, temp: 21 }, { hour: 22, temp: 20 }, { hour: 23, temp: 20 },
+      ],
+      "Simon": [
+        { hour: 0, temp: 19 }, { hour: 1, temp: 18 }, { hour: 2, temp: 18 }, { hour: 3, temp: 17 },
+        { hour: 4, temp: 17 }, { hour: 5, temp: 17 }, { hour: 6, temp: 18 }, { hour: 7, temp: 19 },
+        { hour: 8, temp: 20 }, { hour: 9, temp: 21 }, { hour: 10, temp: 22 }, { hour: 11, temp: 23 },
+        { hour: 12, temp: 24 }, { hour: 13, temp: 24 }, { hour: 14, temp: 23 }, { hour: 15, temp: 23 },
+        { hour: 16, temp: 22 }, { hour: 17, temp: 22 }, { hour: 18, temp: 21 }, { hour: 19, temp: 21 },
+        { hour: 20, temp: 20 }, { hour: 21, temp: 20 }, { hour: 22, temp: 19 }, { hour: 23, temp: 19 },
+      ],
+      "Schlafzimmer": [
+        { hour: 0, temp: 18 }, { hour: 1, temp: 17 }, { hour: 2, temp: 17 }, { hour: 3, temp: 16 },
+        { hour: 4, temp: 16 }, { hour: 5, temp: 16 }, { hour: 6, temp: 17 }, { hour: 7, temp: 18 },
+        { hour: 8, temp: 19 }, { hour: 9, temp: 20 }, { hour: 10, temp: 21 }, { hour: 11, temp: 21 },
+        { hour: 12, temp: 22 }, { hour: 13, temp: 22 }, { hour: 14, temp: 21 }, { hour: 15, temp: 21 },
+        { hour: 16, temp: 20 }, { hour: 17, temp: 20 }, { hour: 18, temp: 19 }, { hour: 19, temp: 19 },
+        { hour: 20, temp: 18 }, { hour: 21, temp: 18 }, { hour: 22, temp: 17 }, { hour: 23, temp: 17 },
+      ],
+      "Badezimmer": [
+        { hour: 0, temp: 17 }, { hour: 1, temp: 16 }, { hour: 2, temp: 16 }, { hour: 3, temp: 15 },
+        { hour: 4, temp: 15 }, { hour: 5, temp: 15 }, { hour: 6, temp: 16 }, { hour: 7, temp: 17 },
+        { hour: 8, temp: 18 }, { hour: 9, temp: 19 }, { hour: 10, temp: 20 }, { hour: 11, temp: 20 },
+        { hour: 12, temp: 21 }, { hour: 13, temp: 21 }, { hour: 14, temp: 20 }, { hour: 15, temp: 20 },
+        { hour: 16, temp: 19 }, { hour: 17, temp: 19 }, { hour: 18, temp: 18 }, { hour: 19, temp: 18 },
+        { hour: 20, temp: 17 }, { hour: 21, temp: 17 }, { hour: 22, temp: 16 }, { hour: 23, temp: 16 },
+      ]
+    }
+    return defaultData[roomName as keyof typeof defaultData] || []
+  }
+
+  const forecastData = [
+    { day: "Heute", temp: 24, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
+    { day: "Morgen", temp: 22, condition: "Bewölkt", icon: Cloud, color: "text-slate-500" },
+    { day: "Mi", temp: 19, condition: "Regen", icon: CloudRain, color: "text-blue-500" },
+    { day: "Do", temp: 21, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
+    { day: "Fr", temp: 25, condition: "Sonnig", icon: Sun, color: "text-amber-500" },
+  ]
+
+  // Build rooms array with live data
+  const rooms: RoomInfo[] = roomConfigs.map(config => {
+    const roomData = roomsData[config.name] || getDefaultData(config.name)
+    const currentTemp = currentTemps[config.name]
+    
+    return {
+      ...config,
+      data: roomData,
+      current: typeof currentTemp === "number" ? Number(currentTemp.toFixed(1)) : 
+               (roomData.length > 0 ? Number(roomData[roomData.length - 1].temp.toFixed(1)) : 24),
+      min: roomData.length > 0 ? Math.min(...roomData.map((d) => d.temp)) : 0,
+      max: roomData.length > 0 ? Math.max(...roomData.map((d) => d.temp)) : 0,
+    }
+  })
 
   const chartConfig = {
     temp: {
@@ -209,6 +238,9 @@ export default function SmartHomeTemperature() {
       color: "hsl(var(--chart-1))",
     },
   }
+
+  // Get Balkon current temperature for weather display
+  const balkonCurrentTemp = currentTemps["Balkon"]
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
@@ -240,7 +272,7 @@ export default function SmartHomeTemperature() {
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
                   <div className="text-4xl font-bold text-slate-900">
-                    {loading ? "Laden..." : currentBalkonTemp !== null ? `${currentBalkonTemp.toFixed(1)}°C` : "-24°C"}
+                    {loading ? "Laden..." : balkonCurrentTemp !== undefined ? `${balkonCurrentTemp.toFixed(1)}°C` : "24°C"}
                   </div>
                   <div className="text-slate-600 font-medium">Sonnig, Klarer Himmel</div>
                 </div>
@@ -363,11 +395,11 @@ export default function SmartHomeTemperature() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-slate-50 rounded-xl">
-                    <div className="text-lg font-bold text-blue-600">{room.min}°C</div>
+                    <div className="text-lg font-bold text-blue-600">{room.min.toFixed(1)}°C</div>
                     <div className="text-sm text-slate-600 font-medium">Minimum</div>
                   </div>
                   <div className="text-center p-3 bg-slate-50 rounded-xl">
-                    <div className="text-lg font-bold text-red-600">{room.max}°C</div>
+                    <div className="text-lg font-bold text-red-600">{room.max.toFixed(1)}°C</div>
                     <div className="text-sm text-slate-600 font-medium">Maximum</div>
                   </div>
                   <div className="text-center p-3 bg-slate-50 rounded-xl">
@@ -399,7 +431,9 @@ export default function SmartHomeTemperature() {
                 <div className="text-sm text-slate-600 font-medium">Alle Sensoren</div>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <div className="text-2xl font-bold text-blue-600 mb-1">21.5°C</div>
+                <div className="text-2xl font-bold text-blue-600 mb-1">
+                  {rooms.length > 0 ? (rooms.reduce((sum, room) => sum + room.current, 0) / rooms.length).toFixed(1) : "21.5"}°C
+                </div>
                 <div className="text-sm text-slate-600 font-medium">Haus-Durchschnitt</div>
               </div>
               <div className="text-center p-4 bg-amber-50 rounded-xl border border-amber-200">
