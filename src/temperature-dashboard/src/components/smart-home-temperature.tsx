@@ -159,7 +159,7 @@ export default function SmartHomeTemperature() {
             }
         }
 
-        fetchAllData()
+        void fetchAllData()
     }, [roomConfigs])
 
     // Default data for fallback
