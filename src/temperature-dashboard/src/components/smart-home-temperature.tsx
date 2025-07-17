@@ -152,7 +152,7 @@ export default function SmartHomeTemperature() {
     {
       name: "Balkon",
       data: balkonData,
-      current: currentBalkonTemp !== null ? currentBalkonTemp : 24,
+      current: currentBalkonTemp !== null ? Number(currentBalkonTemp.toFixed(1)) : 24,
       min: Math.min(...balkonData.map((d) => d.temp)),
       max: Math.max(...balkonData.map((d) => d.temp)),
       icon: TreePine,
