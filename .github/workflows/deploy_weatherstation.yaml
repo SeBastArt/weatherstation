@@ -32,15 +32,19 @@ jobs:
           - name: things
             image: sebastart/thingsapi
             dockerfile: ThingsApi/Dockerfile
+            context: src
           - name: frontend
             image: sebastart/frontend
             dockerfile: Frontend/Dockerfile
+            context: src
           - name: backend
             image: sebastart/backendapi
             dockerfile: BackendApi/Dockerfile
+            context: src
           - name: weather
             image: sebastart/temperature-dashboard
-            dockerfile: temperature-dashboard/Dockerfile
+            dockerfile: Dockerfile
+            context: src/temperature-dashboard
     env:
       DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
@@ -57,11 +61,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push ${{ matrix.component.name }} image
-        working-directory: src
         run: |
-          docker buildx build . \
+          docker buildx build ${{ matrix.component.context }} \
             --platform $DOCKER_TARGET_PLATFORM \
-            --file ${{ matrix.component.dockerfile }} \
+            --file ${{ matrix.component.context }}/${{ matrix.component.dockerfile }} \
             --tag ${{ matrix.component.image }}:${{ needs.prepare.outputs.version }} \
             --tag ${{ matrix.component.image }}:latest \
             --output type=image,push=true
