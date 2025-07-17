@@ -2,52 +2,29 @@
 FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
-# Copy package files
+# Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
+RUN npm ci
 
-# Install dependencies with optimizations
-RUN npm ci --only=production --ignore-scripts --no-audit --no-fund --prefer-offline
-
-# Install dev dependencies separately for build stage
-FROM node:18-alpine AS dev-deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-# Copy package files
-COPY package.json package-lock.json* ./
-
-# Install all dependencies including dev dependencies for build
-RUN npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
-
-# Build stage
+# Rebuild the source code only when needed
 FROM node:18-alpine AS builder
 WORKDIR /app
-
-# Copy all dependencies
-COPY --from=dev-deps /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build with optimizations
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
+# Build the application
 RUN npm run build
 
-# Production image
+# Production image, copy all the files and run next
 FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy only production dependencies
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy built application
+# Copy the built application
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size

@@ -15,10 +15,11 @@ jobs:
       version: ${{ steps.prepare.outputs.version }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Prepare Version
         id: prepare
         run: |
+          # Erstelle eine Version z. B. v1.0.<run_number>
           VERSION="v${{ github.event.inputs.baseversion }}.${GITHUB_RUN_NUMBER}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -48,43 +49,32 @@ jobs:
       DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=moby/buildkit:master
-            network=host
-
       - name: Log into Docker Hub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build and push ${{ matrix.component.name }} image
-        uses: docker/build-push-action@v5
-        with:
-          context: ${{ matrix.component.context }}
-          file: ${{ matrix.component.context }}/${{ matrix.component.dockerfile }}
-          platforms: ${{ env.DOCKER_TARGET_PLATFORM }}
-          push: true
-          tags: |
-            ${{ matrix.component.image }}:${{ needs.prepare.outputs.version }}
-            ${{ matrix.component.image }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
+        run: |
+          docker buildx build ${{ matrix.component.context }} \
+            --platform $DOCKER_TARGET_PLATFORM \
+            --file ${{ matrix.component.context }}/${{ matrix.component.dockerfile }} \
+            --tag ${{ matrix.component.image }}:${{ needs.prepare.outputs.version }} \
+            --tag ${{ matrix.component.image }}:latest \
+            --output type=image,push=true
 
   deploy:
     needs: [build, prepare]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
       - name: Install Helm
