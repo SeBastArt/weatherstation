@@ -1,5 +1,4 @@
 import SmartHomeTemperature from '@/components/smart-home-temperature'
-import TemperatureDashboard from '@/components/temperature-dashboard'
 
 export default function Home() {
   return (
