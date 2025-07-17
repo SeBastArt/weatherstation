@@ -18,7 +18,7 @@ interface RoomInfo {
     current: number;
     min: number;
     max: number;
-    icon: React.ComponentType<any>;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
     color: string;
     lightColor: string;
     textColor: string;
