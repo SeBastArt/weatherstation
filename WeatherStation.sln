@@ -72,6 +72,59 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "src\Frontend\Fr
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "temperature-dashboard", "src\temperature-dashboard\temperature-dashboard.esproj", "{D6325D8C-4B10-0EBF-F501-0C849B85CAE5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helm", "helm", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\.helmignore = helm\weatherstation\.helmignore
+		helm\weatherstation\Chart.yaml = helm\weatherstation\Chart.yaml
+		helm\weatherstation\values.yaml = helm\weatherstation\values.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{5888FF04-1B57-4697-9637-F5B5669746CA}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\namespace.yaml = helm\weatherstation\templates\namespace.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{9DCBB22B-67A6-4425-8F25-0B8B3E06B616}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\backend\deployment.yaml = helm\weatherstation\templates\backend\deployment.yaml
+		helm\weatherstation\templates\backend\destinationrule.yaml = helm\weatherstation\templates\backend\destinationrule.yaml
+		helm\weatherstation\templates\backend\secrets.yaml = helm\weatherstation\templates\backend\secrets.yaml
+		helm\weatherstation\templates\backend\service.yaml = helm\weatherstation\templates\backend\service.yaml
+		helm\weatherstation\templates\backend\virtualservice.yaml = helm\weatherstation\templates\backend\virtualservice.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "frontend", "frontend", "{F4C22533-62B0-44E0-BDCE-7DBD6413E380}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\frontend\deployment.yaml = helm\weatherstation\templates\frontend\deployment.yaml
+		helm\weatherstation\templates\frontend\destinationrule.yaml = helm\weatherstation\templates\frontend\destinationrule.yaml
+		helm\weatherstation\templates\frontend\service.yaml = helm\weatherstation\templates\frontend\service.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "influxdb", "influxdb", "{966E70AB-D740-4849-AAD9-390F62E73CD5}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\influxdb\deployment.yaml = helm\weatherstation\templates\influxdb\deployment.yaml
+		helm\weatherstation\templates\influxdb\pvc.yaml = helm\weatherstation\templates\influxdb\pvc.yaml
+		helm\weatherstation\templates\influxdb\secrets.yaml = helm\weatherstation\templates\influxdb\secrets.yaml
+		helm\weatherstation\templates\influxdb\service.yaml = helm\weatherstation\templates\influxdb\service.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "things", "things", "{104BEC80-1F74-4ED4-A316-9E4560300221}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\things\deployment.yaml = helm\weatherstation\templates\things\deployment.yaml
+		helm\weatherstation\templates\things\destinationrule.yaml = helm\weatherstation\templates\things\destinationrule.yaml
+		helm\weatherstation\templates\things\secrets.yaml = helm\weatherstation\templates\things\secrets.yaml
+		helm\weatherstation\templates\things\service.yaml = helm\weatherstation\templates\things\service.yaml
+		helm\weatherstation\templates\things\virtualservice.yaml = helm\weatherstation\templates\things\virtualservice.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "weather", "weather", "{5D3647FF-EB90-43D5-9B7D-4CAC218CA1C8}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\weather\deployment.yaml = helm\weatherstation\templates\weather\deployment.yaml
+		helm\weatherstation\templates\weather\destinationrule.yaml = helm\weatherstation\templates\weather\destinationrule.yaml
+		helm\weatherstation\templates\weather\service.yaml = helm\weatherstation\templates\weather\service.yaml
+		helm\weatherstation\templates\weather\virtualservice.yaml = helm\weatherstation\templates\weather\virtualservice.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -263,6 +316,12 @@ Global
 		{F26FD3FD-4F50-49BD-BDAC-0EFF26807C96} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
 		{E7D9EC23-4E6A-463C-ADC3-45D3852D8664} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
 		{D6325D8C-4B10-0EBF-F501-0C849B85CAE5} = {B0F9239E-2D50-4994-ACA6-BA80CEE47651}
+		{5888FF04-1B57-4697-9637-F5B5669746CA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{9DCBB22B-67A6-4425-8F25-0B8B3E06B616} = {5888FF04-1B57-4697-9637-F5B5669746CA}
+		{F4C22533-62B0-44E0-BDCE-7DBD6413E380} = {5888FF04-1B57-4697-9637-F5B5669746CA}
+		{966E70AB-D740-4849-AAD9-390F62E73CD5} = {5888FF04-1B57-4697-9637-F5B5669746CA}
+		{104BEC80-1F74-4ED4-A316-9E4560300221} = {5888FF04-1B57-4697-9637-F5B5669746CA}
+		{5D3647FF-EB90-43D5-9B7D-4CAC218CA1C8} = {5888FF04-1B57-4697-9637-F5B5669746CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75771789-CAED-4973-909B-0F8A814C8EFD}

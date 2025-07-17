@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: weather
+spec:
+  replicas: {{ .Values.weather.replicas }}
+  selector:
+    matchLabels:
+      app: weather
+  template:
+    metadata:
+      labels:
+        app: weather
+        version: {{ .Values.weather.version | default "v1" }}
+    spec:
+      containers:
+        - name: weather
+          image: "{{ .Values.weather.image }}:{{ .Values.weather.imageVersion }}"
+          ports:
+            - containerPort: {{ .Values.weather.targetPort }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: NODE_ENV
+              value: "production"

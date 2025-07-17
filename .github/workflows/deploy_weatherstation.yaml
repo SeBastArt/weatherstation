@@ -38,6 +38,9 @@ jobs:
           - name: backend
             image: sebastart/backendapi
             dockerfile: BackendApi/Dockerfile
+          - name: weather
+            image: sebastart/temperature-dashboard
+            dockerfile: temperature-dashboard/Dockerfile
     env:
       DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
@@ -95,4 +98,5 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
             --set backend.imageVersion=${{ needs.prepare.outputs.version }} \
             --set frontend.imageVersion=${{ needs.prepare.outputs.version }} \
-            --set things.imageVersion=${{ needs.prepare.outputs.version }}
+            --set things.imageVersion=${{ needs.prepare.outputs.version }} \
+            --set weather.imageVersion=${{ needs.prepare.outputs.version }}

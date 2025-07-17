@@ -12,6 +12,15 @@ frontend:
   targetPort: 8080
   version: "v1"
 
+weather:
+  image: sebastart/temperature-dashboard
+  imageVersion: "latest"
+  host: weather.wondering-developer.de
+  replicas: 1
+  port: 80
+  targetPort: 3000
+  version: "v1"
+
 things:
   image: sebastart/thingsapi
   imageVersion: "latest"

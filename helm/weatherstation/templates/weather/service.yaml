@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather
+  namespace: {{ .Values.namespace.name }}
+spec:
+  selector:
+    app: weather
+  ports:
+  - name: http
+    port: {{ .Values.weather.port }}
+    targetPort: {{ .Values.weather.targetPort }}

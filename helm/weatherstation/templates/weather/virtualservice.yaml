@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: weather-vs
+  namespace: {{ .Values.namespace.name }}
+spec:
+  hosts:
+  - {{ .Values.weather.host }}
+  gateways:
+  - istio-system/ingress-gateway
+  http:
+  - route:
+    - destination:
+        host: weather
+        subset: {{ .Values.weather.version | default "v1" }}
+        port:
+          number: {{ .Values.weather.port }}
