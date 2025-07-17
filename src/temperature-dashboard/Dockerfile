@@ -1,50 +1,63 @@
-# Multi-stage build with optimizations
-FROM node:18-alpine AS base
+# Install dependencies only when needed
+FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies 
-FROM base AS deps
 # Copy package files
 COPY package.json package-lock.json* ./
-# Install all dependencies with optimizations
-RUN npm ci --ignore-scripts --no-audit --no-fund --prefer-offline --maxsockets=1
+
+# Install dependencies with optimizations
+RUN npm ci --only=production --ignore-scripts --no-audit --no-fund --prefer-offline
+
+# Install dev dependencies separately for build stage
+FROM node:18-alpine AS dev-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies including dev dependencies for build
+RUN npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
 
 # Build stage
-FROM base AS builder
-# Copy dependencies
-COPY --from=deps /app/node_modules ./node_modules
-# Copy source code
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy all dependencies
+COPY --from=dev-deps /app/node_modules ./node_modules
 COPY . .
 
-# Build optimizations
+# Build with optimizations
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-ENV GENERATE_SOURCEMAP=false
-ENV NEXT_OPTIMIZE_IMAGES=true
-ENV NEXT_OPTIMIZE_CSS=true
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
-# Build the application
 RUN npm run build
 
-# Production stage
-FROM base AS runner
+# Production image
+FROM node:18-alpine AS runner
+WORKDIR /app
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create nextjs user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy only production dependencies
+COPY --from=deps /app/node_modules ./node_modules
 
 # Copy built application
 COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
 EXPOSE 3000
+
 ENV PORT=3000
 
 CMD ["node", "server.js"]
