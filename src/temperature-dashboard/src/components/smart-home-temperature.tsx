@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from "react"
 import {Area, AreaChart, ResponsiveContainer, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardHeader, CardTitle} from "./ui/card"
+import { LucideProps } from "lucide-react";
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "./ui/chart"
 import {
     Activity, Bed, Moon, CloudSnow, Cloud, CloudRain, Home, ShowerHead, Thermometer, TreePine, User, Wind,
@@ -59,7 +60,8 @@ interface WeatherForecast {
 }
 
 // --- Icon Mapping für OpenWeatherMap zu Lucide ---
-const weatherIconMap: Record<string, React.ComponentType<SVGSVGElement>> = {
+// Ersetze in deiner Map:
+const weatherIconMap: Record<string, React.ForwardRefExoticComponent<LucideProps & React.RefAttributes<SVGSVGElement>>> = {
     // Klarer Himmel
     "01d": Sun,               // Tag: Sonne
     "01n": Moon,              // Nacht: Mond
