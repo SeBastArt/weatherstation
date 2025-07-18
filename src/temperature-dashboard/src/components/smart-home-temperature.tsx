@@ -4,7 +4,10 @@ import React, {useEffect, useState} from "react"
 import {Area, AreaChart, ResponsiveContainer, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardHeader, CardTitle} from "./ui/card"
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "./ui/chart"
-import {Activity, Bed, Cloud, CloudRain, Home, ShowerHead, Sun, Thermometer, TreePine, User, Wind} from "lucide-react"
+import {
+    Activity, Bed, Moon, CloudSnow, Cloud, CloudRain, Home, ShowerHead, Thermometer, TreePine, User, Wind,
+    CloudLightning, CloudFog, Cloudy, CloudSun, CloudRainWind, CloudMoonRain, CloudMoon, CloudHail, CloudDrizzle, SunMoon, Sun, SunSnow
+} from "lucide-react"
 
 interface RoomData {
     hour: number;
@@ -26,11 +29,74 @@ interface RoomInfo {
     borderColor: string;
 }
 
+// --- Wetterdaten Typen ---
+interface CurrentWeather {
+    city: string;
+    temperature: number;
+    humidity: number;
+    pressure: number;
+    description: string;
+    icon: string;
+    windSpeed: number;
+    windDegree: number;
+    dateTime: string;
+}
+
+interface WeatherForecastEntry {
+    dateTime: string;
+    temperature: number;
+    humidity: number;
+    pressure: number;
+    description: string;
+    icon: string;
+    windSpeed: number;
+    windDegree: number;
+}
+
+interface WeatherForecast {
+    city: string;
+    forecast: WeatherForecastEntry[];
+}
+
+// --- Icon Mapping für OpenWeatherMap zu Lucide ---
+const weatherIconMap: Record<string, React.ComponentType<any>> = {
+    // Klarer Himmel
+    "01d": Sun,               // Tag: Sonne
+    "01n": Moon,              // Nacht: Mond
+    // Wenige Wolken
+    "02d": CloudSun,          // Tag: Sonne mit Wolke
+    "02n": CloudMoon,         // Nacht: Mond mit Wolke
+    // Überwiegend bewölkt
+    "03d": Cloudy,            // Tag: bewölkt
+    "03n": Cloudy,            // Nacht: bewölkt
+    // Bewölkt
+    "04d": Cloud,             // Tag: Wolke
+    "04n": Cloud,             // Nacht: Wolke
+    // Regen
+    "09d": CloudDrizzle,      // Tag: Nieselregen
+    "09n": CloudDrizzle,      // Nacht: Nieselregen
+    "10d": CloudRain,         // Tag: Regen
+    "10n": CloudMoonRain,     // Nacht: Regen mit Mond
+    // Gewitter
+    "11d": CloudLightning,    // Tag: Gewitter
+    "11n": CloudLightning,    // Nacht: Gewitter
+    // Schnee
+    "13d": CloudSnow,   // Tag: Schnee
+    "13n": CloudSnow,   // Nacht: Schnee
+    // Nebel
+    "50d": CloudFog,          // Tag: Nebel
+    "50n": CloudFog           // Nacht: Nebel
+};
+
 export default function SmartHomeTemperature() {
     // State für alle Räume
     const [roomsData, setRoomsData] = useState<{ [key: string]: RoomData[] }>({})
     const [currentTemps, setCurrentTemps] = useState<{ [key: string]: number }>({})
     const [loading, setLoading] = useState(true)
+
+    // Wetter-States
+    const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(null)
+    const [weatherForecast, setWeatherForecast] = useState<WeatherForecast | null>(null)
 
     // Room configuration with EUIs
     const roomConfigs = [
@@ -120,6 +186,30 @@ export default function SmartHomeTemperature() {
             return []
         }
     }
+
+    // Wetterdaten laden
+    useEffect(() => {
+        const fetchWeather = async () => {
+            try {
+                const res = await fetch("https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetCurrentWeather")
+                if (res.ok) {
+                    const data = await res.json()
+                    setCurrentWeather(data)
+                }
+            } catch (e) { console.error(e) }
+        }
+        const fetchForecast = async () => {
+            try {
+                const res = await fetch("https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetWeatherForecast")
+                if (res.ok) {
+                    const data = await res.json()
+                    setWeatherForecast(data)
+                }
+            } catch (e) { console.error(e) }
+        }
+        fetchWeather()
+        fetchForecast()
+    }, [])
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -242,6 +332,27 @@ export default function SmartHomeTemperature() {
     // Get Balkon current temperature for weather display
     const balkonCurrentTemp = currentTemps["Balkon"]
 
+    // Forecast für 5 Tage, jeweils um 12:00 Uhr (Mittag) auswählen
+    const getDailyNoonForecast = (forecast: WeatherForecastEntry[]) => {
+        // Gruppiere nach Tag
+        const grouped: { [date: string]: WeatherForecastEntry[] } = {};
+        forecast.forEach(entry => {
+            const date = new Date(entry.dateTime).toISOString().split("T")[0];
+            if (!grouped[date]) grouped[date] = [];
+            grouped[date].push(entry);
+        });
+        // Für jeden Tag: Forecast um 12:00 suchen, sonst möglichst nah an 12:00
+        return Object.values(grouped).map(entries => {
+            let noon = entries.find(e => new Date(e.dateTime).getHours() === 12);
+            if (!noon) {
+                noon = entries.reduce((prev, curr) => {
+                    return Math.abs(new Date(curr.dateTime).getHours() - 12) < Math.abs(new Date(prev.dateTime).getHours() - 12) ? curr : prev;
+                });
+            }
+            return noon;
+        }).slice(0, 5);
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto space-y-8">
@@ -264,7 +375,9 @@ export default function SmartHomeTemperature() {
                         <CardHeader className="pb-4">
                             <CardTitle className="text-slate-900 flex items-center gap-3 text-xl">
                                 <div className="p-2 bg-amber-100 rounded-xl">
-                                    <Sun className="h-6 w-6 text-amber-600"/>
+                                    {currentWeather && weatherIconMap[currentWeather.icon] ?
+                                        React.createElement(weatherIconMap[currentWeather.icon], {className: "h-6 w-6 text-amber-600"}) :
+                                        <Sun className="h-6 w-6 text-amber-600"/>}
                                 </div>
                                 Aktuelles Wetter
                             </CardTitle>
@@ -273,20 +386,26 @@ export default function SmartHomeTemperature() {
                             <div className="flex items-center justify-between">
                                 <div className="space-y-2">
                                     <div className="text-4xl font-bold text-slate-900">
-                                        {loading ? "Laden..." : balkonCurrentTemp !== undefined ? `${balkonCurrentTemp.toFixed(1)}°C` : "24°C"}
+                                        {loading ? "Laden..." : currentWeather ? `${currentWeather.temperature.toFixed(1)}°C` : "-"}
                                     </div>
-                                    <div className="text-slate-600 font-medium">Sonnig, Klarer Himmel</div>
+                                    <div className="text-slate-600 font-medium">
+                                        {currentWeather ? currentWeather.description : "-"}
+                                    </div>
                                 </div>
                                 <div className="p-4 bg-amber-50 rounded-2xl">
-                                    <Sun className="h-12 w-12 text-amber-500"/>
+                                    {currentWeather && weatherIconMap[currentWeather.icon] ?
+                                        React.createElement(weatherIconMap[currentWeather.icon], {className: "h-12 w-12 text-amber-500"}) :
+                                        <Sun className="h-12 w-12 text-amber-500"/>}
                                 </div>
                             </div>
                             <div className="flex items-center gap-6 pt-2 border-t border-slate-100">
                                 <div className="flex items-center gap-2 text-slate-600">
                                     <Wind className="h-4 w-4"/>
-                                    <span className="font-medium">12 km/h</span>
+                                    <span className="font-medium">{currentWeather ? `${currentWeather.windSpeed} m/s` : "-"}</span>
                                 </div>
-                                <div className="text-slate-600 font-medium">Luftfeuchtigkeit: 65%</div>
+                                <div className="text-slate-600 font-medium">
+                                    Luftfeuchtigkeit: {currentWeather ? `${currentWeather.humidity}%` : "-"}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -304,25 +423,26 @@ export default function SmartHomeTemperature() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {forecastData.map((day, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-2 bg-slate-100 rounded-lg">
-                                                <day.icon className={`h-5 w-5 ${day.color}`}/>
+                                {weatherForecast ? getDailyNoonForecast(weatherForecast.forecast).map((entry, index) => {
+                                    const Icon = weatherIconMap[entry.icon] || Sun;
+                                    const day = new Date(entry.dateTime).toLocaleDateString("de-DE", {weekday: "short"});
+                                    return (
+                                        <div key={index} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-2 bg-slate-100 rounded-lg">
+                                                    <Icon className="h-5 w-5 text-blue-500"/>
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold text-slate-900">{index === 0 ? "Heute" : day}</div>
+                                                    <div className="text-sm text-slate-600">{entry.description}</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div className="font-semibold text-slate-900">{day.day}</div>
-                                                <div className="text-sm text-slate-600">{day.condition}</div>
+                                            <div className="text-right">
+                                                <div className="text-xl font-bold text-slate-900">{entry.temperature.toFixed(1)}°C</div>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <div className="text-xl font-bold text-slate-900">{day.temp}°C</div>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                }) : <div>Laden...</div>}
                             </div>
                         </CardContent>
                     </Card>
