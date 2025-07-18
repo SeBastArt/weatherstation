@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "./ui/card"
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "./ui/chart"
 import {
     Activity, Bed, Moon, CloudSnow, Cloud, CloudRain, Home, ShowerHead, Thermometer, TreePine, User, Wind,
-    CloudLightning, CloudFog, Cloudy, CloudSun, CloudRainWind, CloudMoonRain, CloudMoon, CloudHail, CloudDrizzle, SunMoon, Sun, SunSnow
+    CloudLightning, CloudFog, Cloudy, CloudSun, CloudMoonRain, CloudMoon, CloudDrizzle, Sun
 } from "lucide-react"
 
 interface RoomData {
@@ -299,14 +299,6 @@ export default function SmartHomeTemperature() {
         return defaultData[roomName as keyof typeof defaultData] || []
     }
 
-    const forecastData = [
-        {day: "Heute", temp: 24, condition: "Sonnig", icon: Sun, color: "text-amber-500"},
-        {day: "Morgen", temp: 22, condition: "Bewölkt", icon: Cloud, color: "text-slate-500"},
-        {day: "Mi", temp: 19, condition: "Regen", icon: CloudRain, color: "text-blue-500"},
-        {day: "Do", temp: 21, condition: "Sonnig", icon: Sun, color: "text-amber-500"},
-        {day: "Fr", temp: 25, condition: "Sonnig", icon: Sun, color: "text-amber-500"},
-    ]
-
     // Build rooms array with live data
     const rooms: RoomInfo[] = roomConfigs.map(config => {
         const roomData = roomsData[config.name] || getDefaultData(config.name)
@@ -328,10 +320,7 @@ export default function SmartHomeTemperature() {
             color: "hsl(var(--chart-1))",
         },
     }
-
-    // Get Balkon current temperature for weather display
-    const balkonCurrentTemp = currentTemps["Balkon"]
-
+    
     // Forecast für 5 Tage, jeweils um 12:00 Uhr (Mittag) auswählen
     const getDailyNoonForecast = (forecast: WeatherForecastEntry[]) => {
         // Gruppiere nach Tag
