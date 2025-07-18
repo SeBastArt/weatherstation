@@ -59,7 +59,7 @@ interface WeatherForecast {
 }
 
 // --- Icon Mapping für OpenWeatherMap zu Lucide ---
-const weatherIconMap: Record<string, React.ComponentType<any>> = {
+const weatherIconMap: Record<string, React.ComponentType<SVGSVGElement>> = {
     // Klarer Himmel
     "01d": Sun,               // Tag: Sonne
     "01n": Moon,              // Nacht: Mond
