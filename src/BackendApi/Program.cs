@@ -33,7 +33,6 @@ var app = builder.Build();
     app.UseSwaggerUI();
 //}
 
-app.UseHttpsRedirection();
 app.UseCors(); // Enable CORS middleware
 app.UseAuthorization();
 app.MapControllers();
