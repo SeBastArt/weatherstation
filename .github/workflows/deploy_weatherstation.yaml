@@ -88,10 +88,6 @@ jobs:
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
       - name: Deploy with Helm
-        env:
-          INFLUXDB_INIT_USERNAME: ${{ secrets.INFLUXDB_INIT_USERNAME }}
-          INFLUXDB_INIT_PASSWORD: ${{ secrets.INFLUXDB_INIT_PASSWORD }}
-          INFLUXDB_INIT_ADMIN_TOKEN: ${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}
         run: |
           helm upgrade --install weatherstation ./helm/weatherstation \
             --create-namespace \
@@ -99,6 +95,7 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_USERNAME="${{ secrets.INFLUXDB_INIT_USERNAME }}" \
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
+            --set backend.secrets.OPENWEATHERMAP_API_KEY="${{ secrets.OPEN_WEATHER_MAP_API_KEY }}" \
             --set backend.imageVersion=${{ needs.prepare.outputs.version }} \
             --set frontend.imageVersion=${{ needs.prepare.outputs.version }} \
             --set things.imageVersion=${{ needs.prepare.outputs.version }} \

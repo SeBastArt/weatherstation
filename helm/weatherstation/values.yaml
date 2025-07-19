@@ -38,7 +38,9 @@ backend:
   port: 80
   targetPort: 8080
   version: "v1"
-  
+  secrets:
+    OPEN_WEATHER_MAP_API_KEY: ""
+
 influxdb:
   host: http://influxdb
   version: "v1"
