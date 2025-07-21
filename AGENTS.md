@@ -1,251 +1,145 @@
 ﻿---
-name: "BackendApi"
+name: "Weatherstation"
 description: "Zentrales ASP.NET Core Web API Backend für die Wetterstation, entwickelt mit .NET 8. Aggregiert Daten aus verschiedenen Quellen und stellt Endpunkte für Frontend und weitere Services bereit."
-category: "Backend"
+category: "Web Application"
 tags: ["csharp", ".NET", "api", "weather", "backend"]
 lastUpdated: "2025-07-21"
 ---
 
 # AGENTS.md: Hinweise für Jules
 
-## Übersicht
-Das Projekt `BackendApi` befindet sich unter `src/BackendApi` und ist das zentrale Backend der Wetterstation. Es stellt REST-API-Endpunkte bereit, aggregiert Daten aus ThingsApi, Application und externen Quellen (z.B. OpenWeatherMap) und ist für die Kommunikation mit Frontend und Dashboard zuständig.
+## Project Overview
 
-## Build- und Testanweisungen
+This is a weather station system with a microservices architecture that collects IoT sensor data and displays weather information. The system consists of:
 
-- **Lokal ausführen:**
-    1. Ins Verzeichnis `src/BackendApi` wechseln.
-    2. Folgende Befehle ausführen:
-        ```
-        dotnet restore
-        dotnet build
-        dotnet run
-        ```
-    3. Die API ist dann unter `http://localhost:5000` (oder im Terminal angegebenen Port) erreichbar.
+- **Backend APIs**: ASP.NET Core Web APIs for data processing and external API integration
+- **Frontend**: Blazor WebAssembly application for web interface
+- **Temperature Dashboard**: Next.js React application for modern data visualization
+- **IoT Client**: Arduino-based E-Paper display client
+- **Infrastructure**: Docker, Kubernetes, and Helm configurations for deployment
 
-- **Docker:**
-    1. Im Verzeichnis `src/BackendApi`:
-        ```
-        docker build -t backendapi .
-        docker run -p 5000:80 backendapi
-        ```
-    2. Alternativ über das Root-Docker-Compose:
-        ```
-        docker-compose up backendapi
-        ```
+## Development Commands
 
-- **Kubernetes/Helm:**
-    - Deployment erfolgt über das Helm Chart im Verzeichnis `helm/weatherstation`. Die Konfiguration für BackendApi liegt unter `helm/weatherstation/templates/backend/`.
+### .NET Projects (BackendApi, ThingsApi, Frontend, Application)
+```bash
+# Build and run locally
+cd src/[ProjectName]
+dotnet restore
+dotnet build
+dotnet run
 
-- **Tests:**
-    - Unit-Tests können mit folgendem Befehl ausgeführt werden:
-        ```
-        dotnet test src/BackendApi
-        ```
-    - Die API-Dokumentation ist nach dem Starten unter `/swagger` verfügbar.
+# Run tests
+dotnet test src/[ProjectName]
 
-## Zusammenspiel mit anderen Projekten
+# Docker build
+docker build -t [projectname] .
+```
 
-- Nutzt die Application-Library (`src/Application`) für Geschäftslogik und Datenzugriff.
-- Kommuniziert mit ThingsApi (`src/ThingsApi`) für IoT-Daten.
-- Stellt Endpunkte für Frontend (`src/Frontend`) und das Temperatur-Dashboard (`src/temperature-dashboard`) bereit.
-- Externe API-Keys (z.B. OpenWeatherMap) werden über Umgebungsvariablen oder Secrets (z.B. GitHub Actions, Helm Secrets) bereitgestellt.
+### Next.js Dashboard (temperature-dashboard)
+```bash
+# Development
+cd src/temperature-dashboard
+npm install
+npm run dev          # Development server with Turbopack
+npm run build        # Production build
+npm start            # Production server
+npm run lint         # ESLint
 
-## Troubleshooting/Setup-Hinweise
+# Docker build
+docker build -t temperature-dashboard .
+```
 
-- Benötigte .NET-Version: .NET 8 (ggf. in Setup-Skript installieren: `sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0`)
-- Tests laufen mit: `dotnet test src/BackendApi`
-- Für API-Änderungen immer die OpenAPI-Spezifikation (`swagger.json`) aktualisieren.
+### Docker Compose (Full Stack)
+```bash
+# Start all services
+docker-compose up
 
----
+# Start specific service
+docker-compose up [service-name]
+```
 
-name: "temperature-dashboard"
-description: "React-basiertes Next.js Frontend für die Anzeige von Temperatur- und Wetterdaten. Nutzt Lucide-Icons, TailwindCSS und kommuniziert mit dem BackendApi für Live-Daten."
-category: "Frontend"
-tags: ["react", "nextjs", "dashboard", "weather", "frontend"]
-lastUpdated: "2025-07-21"
----
+### Kubernetes/Helm Deployment
+```bash
+# Deploy to Kubernetes
+helm upgrade --install weatherstation ./helm/weatherstation \
+  --create-namespace \
+  --namespace weatherstation \
+  --set backend.imageVersion=[version] \
+  --set frontend.imageVersion=[version]
+```
 
-## Übersicht
-Das Projekt `temperature-dashboard` befindet sich unter `src/temperature-dashboard`. Es ist ein modernes Web-Frontend, das Wetter- und Temperaturdaten aus dem BackendApi visualisiert. Die Anwendung nutzt Next.js, React, Lucide-Icons und TailwindCSS für UI und Styling.
+## Architecture Overview
 
-## Build- und Testanweisungen
+### Core Services
 
-- **Lokal ausführen:**
-    1. Ins Verzeichnis `src/temperature-dashboard` wechseln.
-    2. Abhängigkeiten installieren:
-        ```
-        npm install
-        ```
-    3. Entwicklungsserver starten:
-        ```
-        npm run dev
-        ```
-    4. Die Anwendung ist dann unter `http://localhost:3000` erreichbar.
+1. **Application Library** (`src/Application/`)
+   - Shared business logic and data models
+   - InfluxDB service for time-series data storage
+   - Payload processors for different IoT device types (Dragino, Decentlab, Liard)
+   - Interfaces: `IInfluxDbService`, `IInfluxDbConfig`, `IPayloadProcessor`
 
-- **Build für Produktion:**
-    ```
-    npm run build
-    npm start
-    ```
+2. **BackendApi** (`src/BackendApi/`)
+   - Main REST API aggregating data from multiple sources
+   - Endpoints for sensor data (temperature, humidity, battery)
+   - OpenWeatherMap API integration for external weather data
+   - Controllers: `ThingsNetworkController`
 
-- **Docker:**
-    1. Im Verzeichnis `src/temperature-dashboard`:
-        ```
-        docker build -t temperature-dashboard .
-        docker run -p 3000:3000 temperature-dashboard
-        ```
-    2. Alternativ über das Root-Docker-Compose:
-        ```
-        docker-compose up temperature-dashboard
-        ```
+3. **ThingsApi** (`src/ThingsApi/`)
+   - Dedicated API for IoT data ingestion from The Things Network
+   - Processes webhook payloads from LoRaWAN devices
+   - Stores sensor data in InfluxDB
 
-- **Tests:**
-    - Linting:
-        ```
-        npm run lint
-        ```
-    - (Optional) Unit-Tests können mit gängigen React-Testframeworks ergänzt werden.
+4. **Frontend** (`src/Frontend/`)
+   - Blazor WebAssembly application
+   - Consumes BackendApi for data display
 
-## Zusammenspiel mit anderen Projekten
+5. **Temperature Dashboard** (`src/temperature-dashboard/`)
+   - Modern React/Next.js dashboard
+   - Uses Recharts for data visualization
+   - TailwindCSS for styling, Lucide React for icons
+   - Configurable backend URL via `NEXT_PUBLIC_BACKEND_API_URL`
 
-- Holt Wetter- und Temperaturdaten über REST-Endpunkte vom BackendApi (`src/BackendApi`).
-- Zeigt die Daten in Echtzeit und mit passenden Wetter-Icons an.
-- Kann in Kubernetes/Helm über das Chart `helm/weatherstation` ausgerollt werden (Konfiguration unter `helm/weatherstation/templates/frontend/`).
+### Data Flow
 
-## Troubleshooting/Setup-Hinweise
+1. IoT sensors → The Things Network → ThingsApi webhook → InfluxDB
+2. BackendApi queries InfluxDB + external APIs → Frontend/Dashboard
+3. Payload processing handles different device types via factory pattern
 
-- Benötigte Node.js-Version: >=18
-- Bei Problemen mit Abhängigkeiten: `npm install --force`
-- Für UI-Änderungen TailwindCSS und Lucide-Icons Dokumentation beachten.
+### Configuration
 
-## Umgebungsvariablen für Backend-URL im temperature-dashboard
+- **Environment Variables**: Stored in `.env` files per service
+- **InfluxDB**: Time-series database for sensor data storage
+- **OpenWeatherMap**: External weather API integration
+- **Docker**: Multi-container setup with service dependencies
 
-Das Projekt `temperature-dashboard` verwendet die Umgebungsvariable `NEXT_PUBLIC_BACKEND_API_URL` zur Konfiguration der Backend-URL. Diese Variable wird in einer `.env` Datei im Projektverzeichnis gesetzt.
+### Deployment Architecture
 
-- **Lokale Entwicklung:**
-  - Setze in der Datei `src/temperature-dashboard/.env` z.B.:
-    ```
-    NEXT_PUBLIC_BACKEND_API_URL=http://localhost:5002
-    ```
-  - Damit werden alle API-Requests des Dashboards an das lokale Backend weitergeleitet.
+- **Docker Compose**: Local development environment
+- **Kubernetes**: Production deployment with Istio service mesh
+- **Helm Charts**: Infrastructure as code in `helm/weatherstation/`
+- **GitHub Actions**: CI/CD pipeline building ARM64 images
+- **InfluxDB**: Persistent volume for data storage
 
-- **Production:**
-  - Standardmäßig ist die URL auf `https://weatherstation.wondering-developer.de` gesetzt, falls keine Umgebungsvariable vorhanden ist.
-  - Für das Deployment kann die Variable im CI/CD oder über Helm/Deployment-Umgebung gesetzt werden.
+## Key Development Patterns
 
-**Best Practice:**
-- Die Variable muss mit dem Prefix `NEXT_PUBLIC_` beginnen, damit sie im Next.js-Frontend verfügbar ist.
-- Änderungen an der `.env` Datei erfordern einen Neustart des Entwicklungsservers.
+### Payload Processing
+The system uses a factory pattern for handling different IoT device payloads:
+- `PayloadProcessorFactory` creates appropriate processors
+- Device-specific processors: `DraginoPayloadProcessor`, `DecentlabPayloadProcessor`, `LiardPayloadProcessor`
 
----
+### Data Models
+- `WeatherDataPoint`: Core sensor data structure
+- `TheThingsPayload<T>`: Generic payload wrapper for The Things Network
+- DTOs for API responses: `CurrentWeatherDto`, `WeatherForecastDto`
 
-name: "Frontend"
-description: "Blazor-basiertes Web-Frontend für die Wetterstation. Stellt eine Benutzeroberfläche für die Anzeige und Interaktion mit Sensordaten und Wetterinformationen bereit. Entwickelt mit .NET 8."
-category: "Frontend"
-tags: ["csharp", ".NET", "blazor", "frontend", "weather"]
-lastUpdated: "2025-07-21"
----
+### Service Dependencies
+- All .NET projects depend on the Application library
+- Services communicate via HTTP APIs
+- InfluxDB serves as the central data store for time-series data
 
-## Übersicht
-Das Projekt `Frontend` befindet sich unter `src/Frontend`. Es handelt sich um eine Blazor WebAssembly Anwendung, die Sensordaten und Wetterinformationen aus dem BackendApi visualisiert und Interaktionen ermöglicht.
+## Environment Configuration
 
-## Build- und Testanweisungen
-
-- **Lokal ausführen:**
-    1. Ins Verzeichnis `src/Frontend` wechseln.
-    2. Folgende Befehle ausführen:
-        ```
-        dotnet restore
-        dotnet build
-        dotnet run
-        ```
-    3. Die Anwendung ist dann unter `http://localhost:5000` (oder im Terminal angegebenen Port) erreichbar.
-
-- **Docker:**
-    1. Im Verzeichnis `src/Frontend`:
-        ```
-        docker build -t frontend .
-        docker run -p 5000:80 frontend
-        ```
-    2. Alternativ über das Root-Docker-Compose:
-        ```
-        docker-compose up frontend
-        ```
-
-- **Kubernetes/Helm:**
-    - Deployment erfolgt über das Helm Chart im Verzeichnis `helm/weatherstation`. Die Konfiguration für Frontend liegt unter `helm/weatherstation/templates/frontend/`.
-
-- **Tests:**
-    - Unit-Tests können mit folgendem Befehl ausgeführt werden:
-        ```
-        dotnet test src/Frontend
-        ```
-
-## Zusammenspiel mit anderen Projekten
-
-- Holt Sensordaten und Wetterinformationen über REST-Endpunkte vom BackendApi (`src/BackendApi`).
-- Kann in Kubernetes/Helm über das Chart `helm/weatherstation` ausgerollt werden (Konfiguration unter `helm/weatherstation/templates/frontend/`).
-
-## Troubleshooting/Setup-Hinweise
-
-- Benötigte .NET-Version: .NET 8
-- Bei Problemen mit Abhängigkeiten: `dotnet restore --force`
-- Für UI-Änderungen Blazor und .NET Dokumentation beachten.
-
----
-
-name: "ThingsApi"
-description: "ASP.NET Core Web API für IoT-Daten. Stellt Endpunkte zur Erfassung und Bereitstellung von Sensordaten aus dem Things Network bereit. Entwickelt mit .NET 8."
-category: "Backend"
-tags: ["csharp", ".NET", "api", "iot", "thingsnetwork"]
-lastUpdated: "2025-07-21"
----
-
-## Übersicht
-Das Projekt `ThingsApi` befindet sich unter `src/ThingsApi`. Es handelt sich um eine ASP.NET Core Web API, die Sensordaten aus dem Things Network verarbeitet und für andere Services (z.B. BackendApi) bereitstellt.
-
-## Build- und Testanweisungen
-
-- **Lokal ausführen:**
-    1. Ins Verzeichnis `src/ThingsApi` wechseln.
-    2. Folgende Befehle ausführen:
-        ```
-        dotnet restore
-        dotnet build
-        dotnet run
-        ```
-    3. Die API ist dann unter `http://localhost:5000` (oder im Terminal angegebenen Port) erreichbar.
-
-- **Docker:**
-    1. Im Verzeichnis `src/ThingsApi`:
-        ```
-        docker build -t thingsapi .
-        docker run -p 5000:80 thingsapi
-        ```
-    2. Alternativ über das Root-Docker-Compose:
-        ```
-        docker-compose up thingsapi
-        ```
-
-- **Kubernetes/Helm:**
-    - Deployment erfolgt über das Helm Chart im Verzeichnis `helm/weatherstation`. Die Konfiguration für ThingsApi liegt unter `helm/weatherstation/templates/backend/`.
-
-- **Tests:**
-    - Unit-Tests können mit folgendem Befehl ausgeführt werden:
-        ```
-        dotnet test src/ThingsApi
-        ```
-    - Die API-Dokumentation ist nach dem Starten unter `/swagger` verfügbar.
-
-## Zusammenspiel mit anderen Projekten
-
-- Stellt Sensordaten für das BackendApi (`src/BackendApi`) bereit.
-- Nutzt die Application-Library (`src/Application`) für Geschäftslogik und Datenzugriff.
-- Kann in Kubernetes/Helm über das Chart `helm/weatherstation` ausgerollt werden.
-
-## Troubleshooting/Setup-Hinweise
-
-- Benötigte .NET-Version: .NET 8
-- Bei Problemen mit Abhängigkeiten: `dotnet restore --force`
-- Für API-Änderungen immer die OpenAPI-Spezifikation (`swagger.json`) aktualisieren.
+Each service requires specific environment variables for proper operation:
+- InfluxDB connection settings (`INFLUXDB_HOST`, `INFLUXDB_ADMIN_TOKEN`, etc.)
+- OpenWeatherMap API key for external weather data
+- Backend URL configuration for frontend services
