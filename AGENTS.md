@@ -119,6 +119,25 @@ Das Projekt `temperature-dashboard` befindet sich unter `src/temperature-dashboa
 - Bei Problemen mit Abhängigkeiten: `npm install --force`
 - Für UI-Änderungen TailwindCSS und Lucide-Icons Dokumentation beachten.
 
+## Umgebungsvariablen für Backend-URL im temperature-dashboard
+
+Das Projekt `temperature-dashboard` verwendet die Umgebungsvariable `NEXT_PUBLIC_BACKEND_API_URL` zur Konfiguration der Backend-URL. Diese Variable wird in einer `.env` Datei im Projektverzeichnis gesetzt.
+
+- **Lokale Entwicklung:**
+  - Setze in der Datei `src/temperature-dashboard/.env` z.B.:
+    ```
+    NEXT_PUBLIC_BACKEND_API_URL=http://localhost:5002
+    ```
+  - Damit werden alle API-Requests des Dashboards an das lokale Backend weitergeleitet.
+
+- **Production:**
+  - Standardmäßig ist die URL auf `https://weatherstation.wondering-developer.de` gesetzt, falls keine Umgebungsvariable vorhanden ist.
+  - Für das Deployment kann die Variable im CI/CD oder über Helm/Deployment-Umgebung gesetzt werden.
+
+**Best Practice:**
+- Die Variable muss mit dem Prefix `NEXT_PUBLIC_` beginnen, damit sie im Next.js-Frontend verfügbar ist.
+- Änderungen an der `.env` Datei erfordern einen Neustart des Entwicklungsservers.
+
 ---
 
 name: "Frontend"
