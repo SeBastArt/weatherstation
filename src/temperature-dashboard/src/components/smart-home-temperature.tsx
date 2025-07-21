@@ -253,9 +253,15 @@ export default function SmartHomeTemperature() {
                 }
             } catch (e) { console.error(e) }
         }
-        fetchWeather()
-        fetchForecast()
-        fetchHourlyForecast(hourlyForecastCount)
+        const fetchHourly = async () => {
+            await fetchHourlyForecast(hourlyForecastCount)
+        }
+        // Promises werden explizit awaited
+        Promise.all([
+            fetchWeather(),
+            fetchForecast(),
+            fetchHourly()
+        ]).catch((err) => console.error(err))
     }, [hourlyForecastCount])
 
     useEffect(() => {
