@@ -96,6 +96,7 @@ jobs:
             --set influxdb.secrets.INFLUXDB_INIT_PASSWORD="${{ secrets.INFLUXDB_INIT_PASSWORD }}" \
             --set influxdb.secrets.INFLUXDB_INIT_ADMIN_TOKEN="${{ secrets.INFLUXDB_INIT_ADMIN_TOKEN }}" \
             --set backend.secrets.OPEN_WEATHER_MAP_API_KEY="${{ secrets.OPEN_WEATHER_MAP_API_KEY }}" \
+            --set postgres.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --set backend.imageVersion=${{ needs.prepare.outputs.version }} \
             --set frontend.imageVersion=${{ needs.prepare.outputs.version }} \
             --set things.imageVersion=${{ needs.prepare.outputs.version }} \

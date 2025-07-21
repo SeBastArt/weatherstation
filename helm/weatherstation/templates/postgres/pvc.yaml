@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "weatherstation.fullname" . }}-postgres-pvc
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "weatherstation.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: {{ .Values.postgres.storage | default "1Gi" }}

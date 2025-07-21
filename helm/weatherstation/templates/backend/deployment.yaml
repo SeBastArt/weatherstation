@@ -16,6 +16,16 @@ spec:
         app: backend
         version: {{ .Values.backend.version | default "v1" }}
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:15-alpine
+          command: ['sh', '-c', 'until pg_isready -h {{ include "weatherstation.fullname" . }}-postgres-service -p {{ .Values.postgres.port }}; do echo waiting for postgres; sleep 2; done']
+          env:
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "weatherstation.fullname" . }}-postgres-secret
+                key: username
       containers:
         - name: backend
           image: "{{ .Values.backend.image }}:{{ .Values.backend.imageVersion }}"
@@ -27,9 +37,23 @@ spec:
               cpu: "100m"
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "500m"
           envFrom:
             - secretRef:
                 name: backend-secrets
+          livenessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: {{ .Values.backend.targetPort }}
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: {{ .Values.backend.targetPort }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 10
       imagePullSecrets:
         - name: docker-container-registry

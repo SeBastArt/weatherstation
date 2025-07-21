@@ -40,6 +40,15 @@ backend:
   version: "v1"
   secrets:
     OPEN_WEATHER_MAP_API_KEY: ""
+  weatherCache:
+    refreshIntervalMinutes: 60
+
+postgres:
+  database: weatherstation
+  username: weatherstation
+  password: ""
+  port: 5432
+  storage: 1Gi
 
 influxdb:
   host: http://influxdb

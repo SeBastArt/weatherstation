@@ -125,6 +125,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "weather", "weather", "{5D36
 		helm\weatherstation\templates\weather\virtualservice.yaml = helm\weatherstation\templates\weather\virtualservice.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postgres", "postgres", "{3B89B8FF-097A-48AE-B6F1-0F3205B32763}"
+	ProjectSection(SolutionItems) = preProject
+		helm\weatherstation\templates\postgres\deployment.yaml = helm\weatherstation\templates\postgres\deployment.yaml
+		helm\weatherstation\templates\postgres\pvc.yaml = helm\weatherstation\templates\postgres\pvc.yaml
+		helm\weatherstation\templates\postgres\secrets.yaml = helm\weatherstation\templates\postgres\secrets.yaml
+		helm\weatherstation\templates\postgres\service.yaml = helm\weatherstation\templates\postgres\service.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -322,6 +330,7 @@ Global
 		{966E70AB-D740-4849-AAD9-390F62E73CD5} = {5888FF04-1B57-4697-9637-F5B5669746CA}
 		{104BEC80-1F74-4ED4-A316-9E4560300221} = {5888FF04-1B57-4697-9637-F5B5669746CA}
 		{5D3647FF-EB90-43D5-9B7D-4CAC218CA1C8} = {5888FF04-1B57-4697-9637-F5B5669746CA}
+		{3B89B8FF-097A-48AE-B6F1-0F3205B32763} = {5888FF04-1B57-4697-9637-F5B5669746CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75771789-CAED-4973-909B-0F8A814C8EFD}

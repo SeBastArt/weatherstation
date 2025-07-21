@@ -13,6 +13,11 @@ services:
       - InfluxDB__Bucket=${INFLUXDB_BUCKET}
       - InfluxDB__Organization=${INFLUXDB_ORG}
       - OpenWeatherMap__ApiKey=${OPEN_WEATHER_MAP_API_KEY}
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - WeatherCache__RefreshIntervalMinutes=${WEATHER_CACHE_INTERVAL_MINUTES}
+    depends_on:
+      - postgres
+      - influxdb
     networks:
       - default
 
@@ -48,5 +53,21 @@ services:
       - INFLUXDB_ORG=${INFLUXDB_ORG}
       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
     entrypoint: ["/bin/sh", "/seed-influxdb.sh"]
+    networks:
+      - default
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-backendapi
+    ports:
+      - "5432:5432"
+    volumes:
+      - c:/temp/docker/postgres-backendapi:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
     networks:
       - default

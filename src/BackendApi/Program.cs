@@ -1,5 +1,8 @@
 using Application.Interfaces;
 using Application.Services;
+using BackendApi.Data;
+using BackendApi.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +27,23 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IInfluxDbConfig>(new InfluxDbConfig(builder.Configuration));
 builder.Services.AddSingleton<IInfluxDbService, InfluxDbService>();
 
+// Add PostgreSQL DbContext
+builder.Services.AddDbContext<WeatherCacheDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Weather Cache Services
+builder.Services.AddHttpClient<IWeatherCacheService, WeatherCacheService>();
+builder.Services.AddScoped<IWeatherCacheService, WeatherCacheService>();
+builder.Services.AddHostedService<WeatherCacheBackgroundService>();
+
 var app = builder.Build();
+
+// Apply database migrations automatically
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<WeatherCacheDbContext>();
+    context.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
