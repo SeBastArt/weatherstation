@@ -154,10 +154,13 @@ export default function SmartHomeTemperature() {
         },
     ]
 
+    // Backend-URL aus Umgebungsvariable
+    const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "https://weatherstation.wondering-developer.de"
+
     // Generic function to fetch current temperature
     const fetchCurrentTemperature = async (eui: string): Promise<number | null> => {
         try {
-            const response = await fetch(`https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetTemperature?eui=${eui}`)
+            const response = await fetch(`${backendBaseUrl}/api/ThingsNetwork/GetTemperature?eui=${eui}`)
             if (response.ok) {
                 const temperature = await response.json()
                 return temperature
@@ -174,7 +177,7 @@ export default function SmartHomeTemperature() {
     // Generic function to fetch temperatures of today
     const fetchTemperaturesOfToday = async (eui: string): Promise<RoomData[]> => {
         try {
-            const response = await fetch(`https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetTemperaturesOfToday?eui=${eui}`)
+            const response = await fetch(`${backendBaseUrl}/api/ThingsNetwork/GetTemperaturesOfToday?eui=${eui}`)
             if (response.ok) {
                 const temps = await response.json()
                 // Map API data to chart format: hour = index, temp = value
@@ -193,7 +196,7 @@ export default function SmartHomeTemperature() {
     useEffect(() => {
         const fetchWeather = async () => {
             try {
-                const res = await fetch("https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetCurrentWeather")
+                const res = await fetch(`${backendBaseUrl}/api/ThingsNetwork/GetCurrentWeather`)
                 if (res.ok) {
                     const data = await res.json()
                     setCurrentWeather(data)
@@ -202,7 +205,7 @@ export default function SmartHomeTemperature() {
         }
         const fetchForecast = async () => {
             try {
-                const res = await fetch("https://weatherstation.wondering-developer.de/api/ThingsNetwork/GetWeatherForecast")
+                const res = await fetch(`${backendBaseUrl}/api/ThingsNetwork/GetWeatherForecast`)
                 if (res.ok) {
                     const data = await res.json()
                     setWeatherForecast(data)
