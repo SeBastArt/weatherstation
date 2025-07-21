@@ -154,12 +154,7 @@ function DetailedDayView({
                             const isLast = index === selectedDayForecasts.length - 1;
                             
                             return (
-                                <div key={index} className="relative">
-                                    {/* Timeline connector line */}
-                                    {!isLast && (
-                                        <div className="absolute left-6 top-16 w-0.5 h-6 bg-gradient-to-b from-blue-300 to-blue-200"></div>
-                                    )}
-                                    
+                                <div key={index} className="relative">                                    
                                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-all duration-200 border border-slate-100">
                                         {/* Timeline dot and time */}
                                         <div className="flex flex-col items-center min-w-[48px]">
