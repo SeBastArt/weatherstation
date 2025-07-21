@@ -7,7 +7,7 @@ import { LucideProps } from "lucide-react";
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "./ui/chart"
 import {
     Activity, Bed, Moon, CloudSnow, Cloud, CloudRain, Home, ShowerHead, Thermometer, TreePine, User, Wind,
-    CloudLightning, CloudFog, Cloudy, CloudSun, CloudMoonRain, CloudMoon, CloudDrizzle, Sun
+    CloudLightning, CloudFog, Cloudy, CloudSun, CloudMoonRain, CloudMoon, CloudDrizzle, Sun, X, Calendar
 } from "lucide-react"
 
 interface RoomData {
@@ -90,6 +90,128 @@ const weatherIconMap: Record<string, React.ForwardRefExoticComponent<LucideProps
     "50n": CloudFog           // Nacht: Nebel
 };
 
+// Detailed Day View Modal Component
+function DetailedDayView({ 
+    date, 
+    forecast, 
+    onClose 
+}: { 
+    date: string | null,
+    forecast: WeatherForecast | null,
+    onClose: () => void 
+}) {
+    if (!date || !forecast) return null;
+
+    // Get all forecast entries for the selected day
+    const selectedDayForecasts = forecast.forecast.filter(entry => {
+        const entryDate = new Date(entry.dateTime).toISOString().split('T')[0];
+        return entryDate === date;
+    });
+
+    // If no forecasts for the day, show the closest ones (for today or past dates)
+    if (selectedDayForecasts.length === 0) {
+        return null;
+    }
+
+    const dayName = new Date(date).toLocaleDateString("de-DE", { 
+        weekday: "long", 
+        day: "2-digit", 
+        month: "2-digit" 
+    });
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl sm:w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 bg-white sticky top-0 z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-xl">
+                            <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600"/>
+                        </div>
+                        <div>
+                            <h2 className="text-lg sm:text-2xl font-bold text-slate-900">{dayName}</h2>
+                            <p className="text-sm sm:text-base text-slate-600">Wettervorhersage im Tagesverlauf</p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={onClose}
+                        className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    >
+                        <X className="h-5 w-5 sm:h-6 sm:w-6 text-slate-600"/>
+                    </button>
+                </div>
+
+                {/* Content - Timeline Layout */}
+                <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(85vh-80px)] sm:max-h-[calc(90vh-120px)]">
+                    <div className="space-y-3">
+                        {selectedDayForecasts.map((entry, index) => {
+                            const Icon = weatherIconMap[entry.icon] || Sun;
+                            const time = new Date(entry.dateTime).toLocaleTimeString("de-DE", { 
+                                hour: "2-digit", 
+                                minute: "2-digit" 
+                            });
+                            const isFirst = index === 0;
+                            const isLast = index === selectedDayForecasts.length - 1;
+                            
+                            return (
+                                <div key={index} className="relative">
+                                    {/* Timeline connector line */}
+                                    {!isLast && (
+                                        <div className="absolute left-6 top-16 w-0.5 h-6 bg-gradient-to-b from-blue-300 to-blue-200"></div>
+                                    )}
+                                    
+                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-all duration-200 border border-slate-100">
+                                        {/* Timeline dot and time */}
+                                        <div className="flex flex-col items-center min-w-[48px]">
+                                            <div className={`w-3 h-3 rounded-full ${isFirst ? 'bg-green-400' : isLast ? 'bg-red-400' : 'bg-blue-400'} shadow-sm`}></div>
+                                            <div className="text-sm font-bold text-slate-700 mt-2 text-center">
+                                                {time}
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Weather icon */}
+                                        <div className="p-3 bg-white rounded-xl shadow-sm">
+                                            <Icon className="h-8 w-8 text-amber-500"/>
+                                        </div>
+                                        
+                                        {/* Weather info */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <div className="text-xl font-bold text-slate-900">
+                                                    {entry.temperature.toFixed(0)}°C
+                                                </div>
+                                                <div className="text-sm text-slate-500 flex items-center gap-1">
+                                                    <Wind className="h-3 w-3"/>
+                                                    {entry.windSpeed.toFixed(1)} m/s
+                                                </div>
+                                            </div>
+                                            <div className="text-sm text-slate-600 capitalize mb-1">
+                                                {entry.description}
+                                            </div>
+                                            <div className="text-xs text-slate-500">
+                                                Luftfeuchtigkeit: {entry.humidity}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    
+                    {/* Timeline end indicator */}
+                    <div className="flex items-center justify-center mt-6 mb-2">
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                            <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
+                            <span>Ende der Vorhersage</span>
+                            <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // Responsive Hourly Forecast Component
 function HourlyForecastTiles({ 
     forecast, 
@@ -131,6 +253,10 @@ export default function SmartHomeTemperature() {
     const [weatherForecast, setWeatherForecast] = useState<WeatherForecast | null>(null)
     const [hourlyForecast, setHourlyForecast] = useState<WeatherForecastEntry[]>([])
     const [hourlyForecastCount, setHourlyForecastCount] = useState(15)
+    
+    // Detailed day view states
+    const [selectedDate, setSelectedDate] = useState<string | null>(null)
+    const [showDetailedView, setShowDetailedView] = useState(false)
 
     // Room configuration with EUIs
     const roomConfigs = [
@@ -400,6 +526,26 @@ export default function SmartHomeTemperature() {
         ? Math.round((new Date(hourlyForecast[hourlyForecast.length-1].dateTime).getTime() - new Date(hourlyForecast[0].dateTime).getTime()) / (1000*60*60))
         : 0;
 
+    // Handle escape key to close modal
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showDetailedView) {
+                setShowDetailedView(false);
+                setSelectedDate(null);
+            }
+        };
+
+        if (showDetailedView) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [showDetailedView]);
+
     return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto space-y-8">
@@ -481,19 +627,37 @@ export default function SmartHomeTemperature() {
                                 {weatherForecast ? getDailyNoonForecast(weatherForecast.forecast).map((entry, index) => {
                                     const Icon = weatherIconMap[entry.icon] || Sun;
                                     const day = new Date(entry.dateTime).toLocaleDateString("de-DE", {weekday: "short"});
+                                    const entryDate = new Date(entry.dateTime).toISOString().split('T')[0];
+                                    
                                     return (
-                                        <div key={index} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                        <div 
+                                            key={index} 
+                                            className="flex items-center justify-between p-3 rounded-xl hover:bg-blue-50 transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200 hover:shadow-sm group"
+                                            onClick={() => {
+                                                setSelectedDate(entryDate);
+                                                setShowDetailedView(true);
+                                            }}
+                                        >
                                             <div className="flex items-center gap-4">
-                                                <div className="p-2 bg-slate-100 rounded-lg">
+                                                <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-blue-100 transition-colors">
                                                     <Icon className="h-5 w-5 text-blue-500"/>
                                                 </div>
                                                 <div>
-                                                    <div className="font-semibold text-slate-900">{index === 0 ? "Heute" : day}</div>
-                                                    <div className="text-sm text-slate-600">{entry.description}</div>
+                                                    <div className="font-semibold text-slate-900 group-hover:text-blue-900 transition-colors">
+                                                        {index === 0 ? "Heute" : day}
+                                                    </div>
+                                                    <div className="text-sm text-slate-600 group-hover:text-blue-700 transition-colors">
+                                                        {entry.description}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className="text-xl font-bold text-slate-900">{entry.temperature.toFixed(1)}°C</div>
+                                                <div className="text-xl font-bold text-slate-900 group-hover:text-blue-900 transition-colors">
+                                                    {entry.temperature.toFixed(1)}°C
+                                                </div>
+                                                <div className="text-xs text-slate-500 group-hover:text-blue-600 transition-colors">
+                                                    Klicken für Details
+                                                </div>
                                             </div>
                                         </div>
                                     );
@@ -623,6 +787,18 @@ export default function SmartHomeTemperature() {
                         </div>
                     </CardContent>
                 </Card>
+                
+                {/* Detailed Day View Modal */}
+                {showDetailedView && (
+                    <DetailedDayView
+                        date={selectedDate}
+                        forecast={weatherForecast}
+                        onClose={() => {
+                            setShowDetailedView(false);
+                            setSelectedDate(null);
+                        }}
+                    />
+                )}
             </div>
         </div>
     )
