@@ -63,21 +63,23 @@ public class ThingsNetworkController : ControllerBase
     }
 
     [HttpGet("GetCurrentWeather")]
-    public async Task<ActionResult<CurrentWeatherDto>> GetCurrentWeather()
+    public async Task<ActionResult<CurrentWeatherAndForecastDto>> GetCurrentWeather()
     {
         var apiKey = _configuration["OpenWeatherMap:ApiKey"];
-        var url = $"https://api.openweathermap.org/data/2.5/weather?lat=51.050407&lon=13.737262&appid={apiKey}&units=metric";
-        var response = await _httpClient.GetAsync(url);
-        if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
-        var json = await response.Content.ReadAsStringAsync();
-        using var doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
-        var weather = root.GetProperty("weather")[0];
-        var main = root.GetProperty("main");
-        var wind = root.GetProperty("wind");
-        var dto = new CurrentWeatherDto
+        var currentWeatherUrl = $"https://api.openweathermap.org/data/2.5/weather?lat=51.050407&lon=13.737262&appid={apiKey}&units=metric";
+        var forecastUrl = $"https://api.openweathermap.org/data/2.5/forecast?lat=51.050407&lon=13.737262&appid={apiKey}&units=metric";
+
+        var currentWeatherResponse = await _httpClient.GetAsync(currentWeatherUrl);
+        if (!currentWeatherResponse.IsSuccessStatusCode) return StatusCode((int)currentWeatherResponse.StatusCode);
+        var currentWeatherJson = await currentWeatherResponse.Content.ReadAsStringAsync();
+        using var currentWeatherDoc = JsonDocument.Parse(currentWeatherJson);
+        var currentWeatherRoot = currentWeatherDoc.RootElement;
+        var weather = currentWeatherRoot.GetProperty("weather")[0];
+        var main = currentWeatherRoot.GetProperty("main");
+        var wind = currentWeatherRoot.GetProperty("wind");
+        var currentWeatherDto = new CurrentWeatherDto
         {
-            City = root.GetProperty("name").GetString(),
+            City = currentWeatherRoot.GetProperty("name").GetString(),
             Temperature = main.GetProperty("temp").GetDouble(),
             Humidity = main.GetProperty("humidity").GetInt32(),
             Pressure = main.GetProperty("pressure").GetInt32(),
@@ -85,8 +87,40 @@ public class ThingsNetworkController : ControllerBase
             Icon = weather.GetProperty("icon").GetString(),
             WindSpeed = wind.GetProperty("speed").GetDouble(),
             WindDegree = wind.GetProperty("deg").GetInt32(),
-            DateTime = DateTimeOffset.FromUnixTimeSeconds(root.GetProperty("dt").GetInt64()).DateTime
+            DateTime = DateTimeOffset.FromUnixTimeSeconds(currentWeatherRoot.GetProperty("dt").GetInt64()).DateTime
         };
+
+        var forecastResponse = await _httpClient.GetAsync(forecastUrl);
+        if (!forecastResponse.IsSuccessStatusCode) return StatusCode((int)forecastResponse.StatusCode);
+        var forecastJson = await forecastResponse.Content.ReadAsStringAsync();
+        using var forecastDoc = JsonDocument.Parse(forecastJson);
+        var forecastRoot = forecastDoc.RootElement;
+        var list = forecastRoot.GetProperty("list");
+        var forecast = new List<WeatherForecastEntryDto>();
+        foreach (var entry in list.EnumerateArray().Take(5))
+        {
+            var forecastWeather = entry.GetProperty("weather")[0];
+            var forecastMain = entry.GetProperty("main");
+            var forecastWind = entry.GetProperty("wind");
+            forecast.Add(new WeatherForecastEntryDto
+            {
+                DateTime = DateTime.Parse(entry.GetProperty("dt_txt").GetString()),
+                Temperature = forecastMain.GetProperty("temp").GetDouble(),
+                Humidity = forecastMain.GetProperty("humidity").GetInt32(),
+                Pressure = forecastMain.GetProperty("pressure").GetInt32(),
+                Description = forecastWeather.GetProperty("description").GetString(),
+                Icon = forecastWeather.GetProperty("icon").GetString(),
+                WindSpeed = forecastWind.GetProperty("speed").GetDouble(),
+                WindDegree = forecastWind.GetProperty("deg").GetInt32(),
+            });
+        }
+
+        var dto = new CurrentWeatherAndForecastDto
+        {
+            CurrentWeather = currentWeatherDto,
+            Forecast = forecast
+        };
+
         return Ok(dto);
     }
 
