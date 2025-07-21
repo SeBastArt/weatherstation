@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useEffect, useState} from "react"
-import {Area, AreaChart, ResponsiveContainer, XAxis, YAxis} from "recharts"
+import {Area, AreaChart, XAxis, YAxis} from "recharts"
 import {Card, CardContent, CardHeader, CardTitle} from "./ui/card"
 import { LucideProps } from "lucide-react";
 import {ChartContainer, ChartTooltip, ChartTooltipContent} from "./ui/chart"
@@ -90,6 +90,36 @@ const weatherIconMap: Record<string, React.ForwardRefExoticComponent<LucideProps
     "50n": CloudFog           // Nacht: Nebel
 };
 
+// Responsive Hourly Forecast Component
+function HourlyForecastTiles({ 
+    forecast, 
+}: { 
+    forecast: WeatherForecastEntry[] 
+}) {
+    return (
+        <div className="flex gap-4 overflow-x-auto">
+            {forecast.map((forecastItem, index) => {
+                const Icon = weatherIconMap[forecastItem.icon] || Sun;
+                const time = new Date(forecastItem.dateTime).toLocaleTimeString("de-DE", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+                return (
+                    <div key={index} className="flex flex-col items-center min-w-[60px] p-2 bg-slate-50 rounded-lg flex-shrink-0">
+                        <div className="text-xs font-medium text-slate-600 mb-1">{time}</div>
+                        <div className="p-1 mb-1">
+                            <Icon className="h-6 w-6 text-amber-500"/>
+                        </div>
+                        <div className="text-sm font-semibold text-slate-800">
+                            {forecastItem.temperature.toFixed(0)}°
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 export default function SmartHomeTemperature() {
     // State für alle Räume
     const [roomsData, setRoomsData] = useState<{ [key: string]: RoomData[] }>({})
@@ -99,6 +129,8 @@ export default function SmartHomeTemperature() {
     // Wetter-States
     const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(null)
     const [weatherForecast, setWeatherForecast] = useState<WeatherForecast | null>(null)
+    const [hourlyForecast, setHourlyForecast] = useState<WeatherForecastEntry[]>([])
+    const [hourlyForecastCount, setHourlyForecastCount] = useState(15)
 
     // Room configuration with EUIs
     const roomConfigs = [
@@ -193,6 +225,15 @@ export default function SmartHomeTemperature() {
     }
 
     // Wetterdaten laden
+    const fetchHourlyForecast = async (hours: number) => {
+        try {
+            const res = await fetch(`${backendBaseUrl}/api/ThingsNetwork/GetNextHourlyForecast?hours=${hours}`)
+            if (res.ok) {
+                const data = await res.json()
+                setHourlyForecast(data)
+            }
+        } catch (e) { console.error(e) }
+    }
     useEffect(() => {
         const fetchWeather = async () => {
             try {
@@ -214,7 +255,8 @@ export default function SmartHomeTemperature() {
         }
         fetchWeather()
         fetchForecast()
-    }, [])
+        fetchHourlyForecast(hourlyForecastCount)
+    }, [hourlyForecastCount])
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -347,6 +389,11 @@ export default function SmartHomeTemperature() {
         }).slice(0, 5);
     };
 
+    // Forecast-Header korrekt berechnen
+    const forecastHours = hourlyForecast.length > 1
+        ? Math.round((new Date(hourlyForecast[hourlyForecast.length-1].dateTime).getTime() - new Date(hourlyForecast[0].dateTime).getTime()) / (1000*60*60))
+        : 0;
+
     return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto space-y-8">
@@ -376,7 +423,7 @@ export default function SmartHomeTemperature() {
                                 Aktuelles Wetter
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-2">
                                     <div className="text-4xl font-bold text-slate-900">
@@ -400,6 +447,14 @@ export default function SmartHomeTemperature() {
                                 <div className="text-slate-600 font-medium">
                                     Luftfeuchtigkeit: {currentWeather ? `${currentWeather.humidity}%` : "-"}
                                 </div>
+                            </div>
+                            
+                            {/* Hourly Forecast */}
+                            <div className="pt-4 border-t border-slate-100">
+                                <h4 className="text-sm font-semibold text-slate-700 mb-3">
+                                    Nächste {forecastHours} Stunden
+                                </h4>
+                                <HourlyForecastTiles forecast={hourlyForecast} />
                             </div>
                         </CardContent>
                     </Card>
@@ -469,46 +524,42 @@ export default function SmartHomeTemperature() {
                             <CardContent className="space-y-6">
                                 <div className="h-48">
                                     <ChartContainer config={chartConfig} className="h-full w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={room.data}
-                                                       margin={{top: 10, right: 10, left: 10, bottom: 10}}>
-                                                <defs>
-                                                    <linearGradient id={`area-${index}`} x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor={room.chartColor}
-                                                              stopOpacity={0.2}/>
-                                                        <stop offset="95%" stopColor={room.chartColor}
-                                                              stopOpacity={0.05}/>
-                                                    </linearGradient>
-                                                </defs>
-                                                <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={false}/>
-                                                <YAxis
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                    tick={{fontSize: 12, fill: "#64748b", fontWeight: 500}}
-                                                    domain={["dataMin - 1", "dataMax + 1"]}
-                                                    tickFormatter={(value) => `${value}°`}
-                                                />
-                                                <ChartTooltip
-                                                    content={<ChartTooltipContent/>}
-                                                    labelFormatter={(value) => `${value}:00 Uhr`}
-                                                    formatter={(value) => [`${value}°C`, "Temperatur"]}
-                                                />
-                                                <Area
-                                                    type="monotone"
-                                                    dataKey="temp"
-                                                    stroke={room.chartColor}
-                                                    strokeWidth={3}
-                                                    fill={`url(#area-${index})`}
-                                                    dot={false}
-                                                    activeDot={{
-                                                        r: 6,
-                                                        stroke: room.chartColor,
-                                                        strokeWidth: 2,
-                                                        fill: "white",
-                                                    }}
-                                                />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
+                                        <AreaChart width={478} height={192} data={room.data}
+                                                   margin={{top: 10, right: 10, left: 10, bottom: 10}}>
+                                            <defs>
+                                                <linearGradient id={`area-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor={room.chartColor} stopOpacity={0.2}/>
+                                                    <stop offset="95%" stopColor={room.chartColor} stopOpacity={0.05}/>
+                                                </linearGradient>
+                                            </defs>
+                                            <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={false}/>
+                                            <YAxis
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{fontSize: 12, fill: "#64748b", fontWeight: 500}}
+                                                domain={["dataMin - 1", "dataMax + 1"]}
+                                                tickFormatter={(value) => `${value}°`}
+                                            />
+                                            <ChartTooltip
+                                                content={<ChartTooltipContent/>}
+                                                labelFormatter={(value) => `${value}:00 Uhr`}
+                                                formatter={(value) => [`${value}°C`, "Temperatur"]}
+                                            />
+                                            <Area
+                                                type="monotone"
+                                                dataKey="temp"
+                                                stroke={room.chartColor}
+                                                strokeWidth={3}
+                                                fill={`url(#area-${index})`}
+                                                dot={false}
+                                                activeDot={{
+                                                    r: 6,
+                                                    stroke: room.chartColor,
+                                                    strokeWidth: 2,
+                                                    fill: "white",
+                                                }}
+                                            />
+                                        </AreaChart>
                                     </ChartContainer>
                                 </div>
 

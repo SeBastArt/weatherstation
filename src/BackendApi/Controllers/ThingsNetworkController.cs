@@ -127,4 +127,48 @@ public class ThingsNetworkController : ControllerBase
         };
         return Ok(dto);
     }
+
+    [HttpGet("GetNext5HourlyForecast")]
+    public async Task<ActionResult<List<WeatherForecastEntryDto>>> GetNext5HourlyForecast()
+    {
+        return await GetNextHourlyForecast(5);
+    }
+
+    [HttpGet("GetNextHourlyForecast")]
+    public async Task<ActionResult<List<WeatherForecastEntryDto>>> GetNextHourlyForecast([FromQuery] int hours = 15)
+    {
+        var apiKey = _configuration["OpenWeatherMap:ApiKey"];
+        var url = $"https://api.openweathermap.org/data/2.5/forecast?lat=51.050407&lon=13.737262&appid={apiKey}&units=metric";
+        var response = await _httpClient.GetAsync(url);
+        if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        var list = root.GetProperty("list");
+        var forecast = new List<WeatherForecastEntryDto>();
+        
+        int count = 0;
+        foreach (var entry in list.EnumerateArray())
+        {
+            if (count >= hours) break;
+            
+            var weather = entry.GetProperty("weather")[0];
+            var main = entry.GetProperty("main");
+            var wind = entry.GetProperty("wind");
+            forecast.Add(new WeatherForecastEntryDto
+            {
+                DateTime = DateTime.Parse(entry.GetProperty("dt_txt").GetString()),
+                Temperature = main.GetProperty("temp").GetDouble(),
+                Humidity = main.GetProperty("humidity").GetInt32(),
+                Pressure = main.GetProperty("pressure").GetInt32(),
+                Description = weather.GetProperty("description").GetString(),
+                Icon = weather.GetProperty("icon").GetString(),
+                WindSpeed = wind.GetProperty("speed").GetDouble(),
+                WindDegree = wind.GetProperty("deg").GetInt32(),
+            });
+            count++;
+        }
+        
+        return Ok(forecast);
+    }
 }

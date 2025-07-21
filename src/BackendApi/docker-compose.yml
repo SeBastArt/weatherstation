@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  backendApi:
+  backendapi:
     build:
       context: ../
       dockerfile: BackendApi/Dockerfile
@@ -12,6 +12,7 @@ services:
       - InfluxDB__AdminToken=${INFLUXDB_ADMIN_TOKEN}
       - InfluxDB__Bucket=${INFLUXDB_BUCKET}
       - InfluxDB__Organization=${INFLUXDB_ORG}
+      - OpenWeatherMap__ApiKey=${OPEN_WEATHER_MAP_API_KEY}
     networks:
       - default
 
@@ -33,5 +34,19 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    networks:
+      - default
+
+  seed-influxdb:
+    image: alpine:latest
+    depends_on:
+      - influxdb
+    volumes:
+      - ./seed-influxdb.sh:/seed-influxdb.sh:ro
+    environment:
+      - INFLUXDB_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+      - INFLUXDB_ORG=${INFLUXDB_ORG}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+    entrypoint: ["/bin/sh", "/seed-influxdb.sh"]
     networks:
       - default
