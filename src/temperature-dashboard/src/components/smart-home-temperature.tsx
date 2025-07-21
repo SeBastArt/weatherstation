@@ -212,22 +212,25 @@ function DetailedDayView({
     );
 }
 
-// Responsive Hourly Forecast Component
+// Responsive Hourly Forecast Component - Clean & Compact
 function HourlyForecastTiles({ 
     forecast, 
 }: { 
     forecast: WeatherForecastEntry[] 
 }) {
+    if (forecast.length === 0) return null;
+
     return (
-        <div className="flex gap-4 overflow-x-auto">
+        <div className="flex gap-2 overflow-x-auto pb-3">
             {forecast.map((forecastItem, index) => {
                 const Icon = weatherIconMap[forecastItem.icon] || Sun;
                 const time = new Date(forecastItem.dateTime).toLocaleTimeString("de-DE", {
                     hour: "2-digit",
                     minute: "2-digit"
                 });
+                
                 return (
-                    <div key={index} className="flex flex-col items-center min-w-[60px] p-2 bg-slate-50 rounded-lg flex-shrink-0">
+                    <div key={index} className="flex flex-col items-center min-w-[65px] p-2 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors flex-shrink-0">
                         <div className="text-xs font-medium text-slate-600 mb-1">{time}</div>
                         <div className="p-1 mb-1">
                             <Icon className="h-6 w-6 text-amber-500"/>
