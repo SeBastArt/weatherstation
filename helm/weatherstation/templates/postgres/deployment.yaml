@@ -4,21 +4,22 @@ metadata:
   name: {{ include "weatherstation.fullname" . }}-postgres
   namespace: {{ .Values.namespace.name }}
   labels:
-    {{- include "weatherstation.labels" . | nindent 4 }}
+    {{ include "weatherstation.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgres
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "weatherstation.selectorLabels" . | nindent 6 }}
+      {{ include "weatherstation.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: postgres
       version: v1
   template:
     metadata:
       labels:
-        {{- include "weatherstation.selectorLabels" . | nindent 8 }}
+        {{ include "weatherstation.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: postgres
+        app: postgres
         version: v1
     spec:
       containers:

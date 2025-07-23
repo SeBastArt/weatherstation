@@ -4,14 +4,14 @@ metadata:
   name: {{ include "weatherstation.fullname" . }}-postgres-service
   namespace: {{ .Values.namespace.name }}
   labels:
-    {{- include "weatherstation.labels" . | nindent 4 }}
+    {{ include "weatherstation.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgres
 spec:
   selector:
-    {{- include "weatherstation.selectorLabels" . | nindent 4 }}
+    {{ include "weatherstation.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: postgres
   ports:
-  - name: postgres
+  - name: tcp-postgres
     protocol: TCP
     port: {{ .Values.postgres.port }}
     targetPort: {{ .Values.postgres.port }}
